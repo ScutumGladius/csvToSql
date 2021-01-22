@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30608.117
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvToSql", "CsvToSql.csproj", "{5B7F9A84-657A-492C-8BE1-DA6B1F6937CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvToSqlTest", "..\..\test\CsvToSqlTest\CsvToSqlTest.csproj", "{DB06360A-46A5-440C-A0BA-977C9A8B5D37}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5B7F9A84-657A-492C-8BE1-DA6B1F6937CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B7F9A84-657A-492C-8BE1-DA6B1F6937CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B7F9A84-657A-492C-8BE1-DA6B1F6937CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B7F9A84-657A-492C-8BE1-DA6B1F6937CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB06360A-46A5-440C-A0BA-977C9A8B5D37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB06360A-46A5-440C-A0BA-977C9A8B5D37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB06360A-46A5-440C-A0BA-977C9A8B5D37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB06360A-46A5-440C-A0BA-977C9A8B5D37}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {21BC4A91-EF90-4388-8ECA-398D980D88CC}
+	EndGlobalSection
+EndGlobal
