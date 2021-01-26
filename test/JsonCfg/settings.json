@@ -1,0 +1,52 @@
+{
+"importFiles": 
+	[
+        {
+            "connectionString": "Server=localhost;Database=EUC;User Id=SDMC_User;Password=SDMC_User;MultipleActiveResultSets=true;",
+            "file": "../CMDB _OMS_July_2020.xlsx",
+            "sheet": "Ovierview",
+            "csv": false,
+            "row": 3,
+            "col": 2,
+            "skipline": 0,
+            "table": "OMS",
+            "prefix": "oms:",
+            "key": "SerialNumber",
+            "macFix":  "macAddress",
+            "columnMapping": [
+                {
+                    "SAL code": "SAL",
+                    "site (city, street, zip code)": "City",
+                    "serialNumber": "SerialNumber",
+                    "macAddress": "MacAdress",
+                    "country": "CountryCode",
+                    "building": "Building",
+                    "room": "Room",
+                    "IP Address": "IpAddress",
+                    "printerAccountName": "PrinterName",
+                    "printerDomainLongName": "PrinterDomainLongName",
+                    "statusFlag": "Status",
+                    "ownerGID": "OwnerGID"
+                }
+            ]
+        },
+        {
+            "file": "z:/20200911132530_20200907_Clients_SE.csv",
+            "csv": true,
+            "table": "ADPL",
+            "prefix": "apdl:",
+            "key": "host_name",
+            "columnMapping": [
+                {
+                    "host_name": "host_name",
+                    "status": "status",
+                    "err_msg": "err_msg",
+                    "source_vlan": "source_vlan",
+                    "target_vlan": "target_vlan",
+                    "confirmation": "confirmation",
+                    "**20200911132530_20200907_Clients_SE.csv": "DCSource"
+                }
+            ]
+        }
+    ]
+}

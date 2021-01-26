@@ -22,8 +22,9 @@ namespace CsvToSql.Core
         [Option("importdate", Required = false, HelpText = "value for _DCImportDate_")]
         public string ImportDate { get; set; }
 
-        /*[Value(0)]
+        public DateTime ImportDateTime { get; set; }
+
+        [Value(0)]
         public IEnumerable<string> StringSequence { get; set; }
-        */
     }
 }

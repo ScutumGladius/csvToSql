@@ -1,0 +1,7 @@
+1. config.xml - default Werte 
+2. 
+N. Nach dem Importieren, bitte einen Eintrag in die Tabelle "TABLESTATUS" schreiben.
+SELECT TOP (1000) [Tablename]
+      ,[Comment]
+      ,[Imported]
+  FROM [DataCollection].[dbo].[TABLESTATUS]
