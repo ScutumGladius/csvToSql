@@ -14,5 +14,9 @@ namespace CsvToSql.logging
         {
             Console.WriteLine("Trace:" + toLog);
         }
+        public void Error(string toLog)
+        {
+            Console.WriteLine("Error:" + toLog);
+        }
     }
 }

@@ -1,8 +1,11 @@
 ﻿using CsvToSql.logging;
 using CsvToSql.Configuration;
 using System;
+using System.Linq;
 using CsvToSql.Core;
 using Microsoft.Extensions.Configuration;
+using CsvToSql.Engine;
+using System.Collections.Generic;
 
 namespace CsvToSql
 {
@@ -18,7 +21,11 @@ namespace CsvToSql
 
             var log = new Logging();
             ArgcOptions programCfg = ProgramConfiguration.Read(log, args);
-            var jsonCfg = ImportTasks.Read(log, programCfg.JsonCfgFile);
+            var importTasks = (List<ImportFileOptions>)ImportTasks.ReadFromJsonFile(log, programCfg.JsonCfgFile);
+
+            var executor = new TaskExecutor(log);
+            importTasks.ForEach(impTask => executor.Run(impTask));
+
         }
     }
 }

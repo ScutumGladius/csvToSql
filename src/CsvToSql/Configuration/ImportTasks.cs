@@ -6,14 +6,22 @@ using System.Text;
 using Newtonsoft.Json;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace CsvToSql.Configuration
 {
     public static class ImportTasks
     {
-        public static IList<ImportFileOptions> Read(Logging l, string JsonCfgFile)
+        public static IList<ImportFileOptions> ReadFromJsonFile(Logging l, string JsonCfgFile)
         {
             var fileContent = File.ReadAllText(JsonCfgFile);
+            //importTasks = (List<ImportFileOptions>)importTasks.ToObject<IList<ImportFileOptions>>(); ' Boom :(
+            List<ImportFileOptions> importTasks = (List<ImportFileOptions>)ReadTasks(l, fileContent);
+            return importTasks;
+        }
+
+        public static IList<ImportFileOptions> ReadTasks(Logging l, string fileContent)
+        {
             JObject importTasksRoot = JObject.Parse(fileContent);
 
             var importFiles = new List<ImportFileOptions>();
@@ -22,64 +30,98 @@ namespace CsvToSql.Configuration
             foreach (var importFile in importTasks)
             {
                 var importFileOptions = new ImportFileOptions();
-                
-                importFileOptions.connectionString = getTokenAsString(importFile, "connectionString", "");
-                importFileOptions.file = getTokenAsString(importFile, "file", "");
-                importFileOptions.sheet = getTokenAsString(importFile, "sheet", "");
-                importFileOptions.row = getTokenAsInt(importFile, "row", -1);
-                importFileOptions.col = getTokenAsInt(importFile, "col", -1);
-                importFileOptions.skipline = getTokenAsInt(importFile, "skipline", -1);
 
-                importFileOptions.table = getTokenAsString(importFile, "table", "");
-                importFileOptions.prefix = getTokenAsString(importFile, "prefix", "");
-                importFileOptions.key = getTokenAsString(importFile, "key", "");
-                importFileOptions.macFix = getTokenAsString(importFile, "macFix", "");
-                importFileOptions.csv = getTokenAsBoolean(importFile, "csv", true);
-//        public Dictionary<string, string> columnMapping { get; set; }
+                importFileOptions.connectionString = GetTokenAsString(l, importFile, "connectionString", "");
+                importFileOptions.file = GetTokenAsString(l, importFile, "file", "");
+                importFileOptions.sheet = GetTokenAsString(l, importFile, "sheet", "");
+                importFileOptions.row = GetTokenAsInt(l, importFile, "row", -1);
+                importFileOptions.col = GetTokenAsInt(l, importFile, "col", -1);
+                importFileOptions.skipline = GetTokenAsInt(l, importFile, "skipline", -1);
+
+                importFileOptions.table = GetTokenAsString(l, importFile, "table", "");
+                importFileOptions.prefix = GetTokenAsString(l, importFile, "prefix", "");
+                importFileOptions.key = GetTokenAsString(l, importFile, "key", "");
+                importFileOptions.macFix = GetTokenAsString(l, importFile, "macFix", "");
+                importFileOptions.csv = GetTokenAsBoolean(l, importFile, "csv", true);
+                importFileOptions.columnMapping = GetTokenAsDictionary(l, importFile, "columnMapping");
+                importFileOptions.batchSize = GetTokenAsInt(l, importFile, "batchSize", 1000);
+                importFileOptions.delimiter = GetTokenAsString(l, importFile, "delimiter", "");
 
                 importFiles.Add(importFileOptions);
             }
-
-            //importFiles = (List<ImportFileOptions>)importTasks.ToObject<IList<ImportFileOptions>>(); ' Boom :(
-
             return importFiles;
         }
 
-        private static string getTokenAsString(JToken importFile, string key, string defaultVal)
+        private static Dictionary<string, string> GetTokenAsDictionary(Logging l, JToken importFile, string key)
         {
+
+            Dictionary<string, string> columnMapping = new Dictionary<string, string>();
             try
             {
-                var t = importFile.SelectToken(key);
-                return t == null ? defaultVal : t.ToString();
+                var section = importFile.SelectToken(key);
+                if (section == null)
+                {
+                    l.Trace($"GetTokenAsDictionary : section '{key}' is empty!");
+                    return columnMapping; 
+                }
+                if (section.Count<object>() != 1)
+                {
+                    l.Trace($"GetTokenAsDictionary : section '{key}' has not any object(s)!");
+                    return columnMapping;
+                }
+                foreach (JProperty dPair in section.First) {
+                    columnMapping.Add(dPair.Name, dPair.Value.ToString());
+                    l.Trace($"GetTokenAsDictionary : Add key='{dPair.Name}' value='{dPair.Value.ToString()}'");
+                }
+                return columnMapping;
             }
             catch (Exception)
             {
-                return defaultVal;
+                return columnMapping;
             }
         }
-        private static int getTokenAsInt(JToken importFile, string key, int defaultVal)
+
+        private static string GetTokenAsString(Logging l, JToken importFile, string key, string defaultVal)
         {
+            var ret = defaultVal;
             try
             {
                 var t = importFile.SelectToken(key);
-                return t == null ? defaultVal : (int)t;
+                ret = t == null ? defaultVal : t.ToString();
             }
             catch (Exception)
             {
-                return defaultVal;
             }
+            l.Trace($"GetTokenAsString {key} = '{ret}'");
+            return ret;
         }
-        private static bool getTokenAsBoolean(JToken importFile, string key, bool defaultVal)
+        private static int GetTokenAsInt(Logging l, JToken importFile, string key, int defaultVal)
         {
+            var ret = defaultVal;
             try
             {
                 var t = importFile.SelectToken(key);
-                return t == null ? defaultVal : (bool)t;
+                ret = t == null ? defaultVal : (int)t;
             }
             catch (Exception)
             {
-                return defaultVal;
             }
+            l.Trace($"GetTokenAsInt {key} = {ret}.");
+            return ret;
+        }
+        private static bool GetTokenAsBoolean(Logging l, JToken importFile, string key, bool defaultVal)
+        {
+            var ret = defaultVal;
+            try
+            {
+                var t = importFile.SelectToken(key);
+                ret = t == null ? defaultVal : (bool)t;
+            }
+            catch (Exception)
+            {
+            }
+            l.Trace($"GetTokenAsBoolean {key} = {ret}");
+            return ret;
         }
 
     }

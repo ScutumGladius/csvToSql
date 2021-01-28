@@ -17,6 +17,10 @@ namespace CsvToSql.Core
         public string key { get; set; }
         public string macFix { get; set; }
         public bool csv { get; set; } // true || false
+        public int batchSize { get; set; }
+        public string delimiter { get; set; }
+        
+
         public Dictionary<string, string> columnMapping { get; set; }
     }
 

@@ -13,8 +13,10 @@
             "prefix": "oms:",
             "key": "SerialNumber",
             "macFix":  "macAddress",
+			"delimiter": "|",
             "columnMapping": [
                 {
+                    "KEY": "VALUE",
                     "SAL code": "SAL",
                     "site (city, street, zip code)": "City",
                     "serialNumber": "SerialNumber",

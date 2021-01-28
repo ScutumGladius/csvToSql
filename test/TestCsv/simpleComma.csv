@@ -1,0 +1,13 @@
+host_name,status,err_msg,source_vlan,target_vlan,confirmation
+md2t82dc.ad001.siemens.net,moved,,-20516,-78,confirmed
+md2t7xec.ad005.onehc.net,error,Error:  Info=Device-IP datarecord already exists!-20516,-78,
+md2t82pc.ad001.siemens.net,moved,,-20516,-78,confirmed
+md2t8enc.ad001.siemens.net,error,Error:  Info=Device-IP datarecord already exists!-20516,-78,
+md2t8epc.ad001.siemens.net,error,Error:  Info=Device-IP datarecord already exists!-20516,-78,
+md2t8e9c.ad001.siemens.net,moved,,-20516,-78,confirmed
+md2t83fc.ad001.siemens.net,error,Error:  Info=Device-IP datarecord already exists!-20516,-78,
+md2t8e6c.ad001.siemens.net,moved,,-20516,-78,confirmed
+md2t8eqc.ad001.siemens.net,error,Error:  Info=Device-IP datarecord already exists!-20516,-78,
+mdat732p.print.siemens.net,aborted,Person not is status 1,-20516,-78,
+md2ssc8c.ad001.siemens.net,Tagged_already,,,-20516,confirmed
+md2ka1sc.ad001.siemens.net,Tagged_already,,,-20516,confirmed
