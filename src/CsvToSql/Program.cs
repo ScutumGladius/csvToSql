@@ -23,7 +23,10 @@ namespace CsvToSql
             ArgcOptions programCfg = ProgramConfiguration.Read(log, args);
             var importTasks = (List<ImportFileOptions>)ImportTasks.ReadFromJsonFile(log, programCfg.JsonCfgFile);
 
-            var executor = new TaskExecutor(log);
+            var csvReader = new FileReader.ReadCsv(log);
+            var sqlWriter = new SqlWriter.SqlServerWriter(log);
+
+            var executor = new TaskExecutor(log, csvReader, sqlWriter);
             importTasks.ForEach(impTask => executor.Run(impTask));
 
         }

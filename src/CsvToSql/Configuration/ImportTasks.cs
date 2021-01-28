@@ -44,7 +44,7 @@ namespace CsvToSql.Configuration
                 importFileOptions.macFix = GetTokenAsString(l, importFile, "macFix", "");
                 importFileOptions.csv = GetTokenAsBoolean(l, importFile, "csv", true);
                 importFileOptions.columnMapping = GetTokenAsDictionary(l, importFile, "columnMapping");
-                importFileOptions.batchSize = GetTokenAsInt(l, importFile, "batchSize", 1000);
+                importFileOptions.batchSize = Math.Abs(GetTokenAsInt(l, importFile, "batchSize", 1000));
                 importFileOptions.delimiter = GetTokenAsString(l, importFile, "delimiter", "");
 
                 importFiles.Add(importFileOptions);

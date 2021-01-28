@@ -1,13 +1,15 @@
 ﻿using CsvToSql.Core;
 using CsvToSql.logging;
+using CsvToSql.SqlWriter;
 using LumenWorks.Framework.IO.Csv;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace CsvToSql.FileReader
 {
-    class ReadCsv
+    public class ReadCsv
     {
         private readonly Logging Log;
 
@@ -16,35 +18,37 @@ namespace CsvToSql.FileReader
             Log = log;
         }
 
-        public int Read(ImportFileOptions importTask) {
+        public int Read(ImportFileOptions importTask, ISqlWriter sqlWriter) {
             Log.Debug($"ReadCsv for '{importTask.file}'");
 
             List<List<string>> allLineFields = new List<List<string>>();
             var fileInfo = new System.IO.FileInfo(importTask.file);
 
-            Char delimiter = GuessDelimeter(fileInfo);
+            Char delimiter = string.IsNullOrWhiteSpace(importTask.delimiter) ? GuessDelimeter(fileInfo) : importTask.delimiter.First<char>();
             var rowCounter = 0;
 
             try
             {
                 using (var reader = new System.IO.StreamReader(fileInfo.FullName, Encoding.Default))
                 {
-                    Char quotingCharacter = '\0'; // no quoting-character;
+                    //Char quotingCharacter = '\0'; // no quoting-character;
+                    Char quotingCharacter = '"'; // "Value1","Value2"
                     Char escapeCharacter = quotingCharacter;
                     using (var csv = new CsvReader(reader, false, delimiter, quotingCharacter, escapeCharacter, '\0', ValueTrimmingOptions.All))
                     {
                         var headers = ReadHeaders(csv);
-                        Log.Debug("Headers : " + string.Join(",", headers));
+                        Log.Debug("Read:Headers : " + string.Join(",", headers));
 
                         csv.DefaultParseErrorAction = ParseErrorAction.ThrowException;
-                        //csv.ParseError += csv_ParseError;  // if you want to handle it somewhere else
                         csv.SkipEmptyLines = true;
  
                         do
                         {
                             allLineFields = ReadNextBatch(csv, importTask.batchSize);
                             rowCounter += allLineFields.Count;
-                            // insert in DB
+                            Log.Debug($"Read Next Batch : {rowCounter}/{allLineFields.Count}");
+
+                            sqlWriter.Write(importTask, rowCounter, headers, allLineFields);
                         } while (allLineFields.Count > 0);
                     }
                 }
@@ -68,7 +72,7 @@ namespace CsvToSql.FileReader
             List<List<string>> allLineFields = new List<List<string>>();
             var currentRow = 0; 
 
-            while (csv.ReadNextRecord() & currentRow++ < batchSize)
+            while (currentRow++ < batchSize && csv.ReadNextRecord())
             {
                 List<string> fields = CsvRowToList(csv);
                 allLineFields.Add(fields);
