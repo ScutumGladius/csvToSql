@@ -20,10 +20,13 @@ namespace CsvToSqlTest
         public void ImportTasksTest_ReadFile()
         {
             // Arrange
-            var pathToJsonSettings = "..\\..\\..\\..\\JsonCfg\\settings.json";
+            var argv = new ArgcOptions()
+            {
+                JsonCfgFile = "..\\..\\..\\..\\JsonCfg\\settings.json"
+            };
 
             // Act
-            var importTasks = CsvToSql.Configuration.ImportTasks.ReadFromJsonFile(log, pathToJsonSettings);
+            var importTasks = CsvToSql.Configuration.ImportTasks.ReadFromJsonFile(log, argv);
 
             // Assert
             Assert.AreEqual(importTasks.Count, 2);

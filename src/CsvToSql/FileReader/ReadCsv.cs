@@ -21,46 +21,71 @@ namespace CsvToSql.FileReader
         public int Read(ImportFileOptions importTask, ISqlWriter sqlWriter) {
             Log.Debug($"ReadCsv for '{importTask.file}'");
 
-            List<List<string>> allLineFields = new List<List<string>>();
+            List<List<string>> batchLineFields = new List<List<string>>();
             var fileInfo = new System.IO.FileInfo(importTask.file);
 
-            Char delimiter = string.IsNullOrWhiteSpace(importTask.delimiter) ? GuessDelimeter(fileInfo) : importTask.delimiter.First<char>();
+            var firstLine = ReadFirstLine(fileInfo);
+
+            Char delimiter = string.IsNullOrWhiteSpace(importTask.delimiter) ? GuessDelimeter(firstLine) : importTask.delimiter.First<char>();
+            //Char quotingCharacter = '\0'; // no quoting-character;
+            Char quotingCharacter = string.IsNullOrWhiteSpace(importTask.quoting) ? GuessquotingCharacter(firstLine) : importTask.quoting.First<char>(); 
             var rowCounter = 0;
 
             try
             {
                 using (var reader = new System.IO.StreamReader(fileInfo.FullName, Encoding.Default))
                 {
-                    //Char quotingCharacter = '\0'; // no quoting-character;
-                    Char quotingCharacter = '"'; // "Value1","Value2"
                     Char escapeCharacter = quotingCharacter;
                     using (var csv = new CsvReader(reader, false, delimiter, quotingCharacter, escapeCharacter, '\0', ValueTrimmingOptions.All))
                     {
-                        var headers = ReadHeaders(csv);
-                        Log.Debug("Read:Headers : " + string.Join(",", headers));
-
                         csv.DefaultParseErrorAction = ParseErrorAction.ThrowException;
                         csv.SkipEmptyLines = true;
+
+                        var headers = ReadHeaders(csv);
+                        Log.Debug("Read:Headers : " + string.Join(",", headers));
+                        sqlWriter.Init(importTask, headers);
  
                         do
                         {
-                            allLineFields = ReadNextBatch(csv, importTask.batchSize);
-                            rowCounter += allLineFields.Count;
-                            Log.Debug($"Read Next Batch : {rowCounter}/{allLineFields.Count}");
+                            // Read a pies of CSV
+                            batchLineFields = ReadNextBatch(csv, importTask.batchSize);
+                            if (batchLineFields.Count == 0) break;
+                            Log.Debug($"Read Next Batch : {batchLineFields.Count} entries. From {rowCounter} to {batchLineFields.Count + rowCounter}");
 
-                            sqlWriter.Write(importTask, rowCounter, headers, allLineFields);
-                        } while (allLineFields.Count > 0);
+                            //Create & Write SQL
+                            sqlWriter.Write(batchLineFields);
+
+                            rowCounter += batchLineFields.Count;
+                        } while (batchLineFields.Count > 0);
                     }
                 }
             }
             catch (Exception ex)
             {
                 Log.Error($"ReadCsv catch exception : {ex.Message}");
-                throw;
+                return -1;
             }
             return rowCounter;
         }
 
+
+        private string ReadFirstLine(System.IO.FileInfo fileInfo)
+        {
+            try
+            {
+                using (var reader = new System.IO.StreamReader(fileInfo.FullName, Encoding.Default))
+                {
+                    return reader.ReadLine();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"ReadCsv ReadFirstLine exception : {ex.Message}");
+                return "";
+            }
+        }
+
+     
         private List<string> ReadHeaders(CsvReader csv)
         {
             csv.ReadNextRecord();
@@ -83,6 +108,7 @@ namespace CsvToSql.FileReader
         private List<string> CsvRowToList(CsvReader csv)
         {
             List<string> fields = new List<string>(csv.FieldCount);
+            var exWasRaised = false;
             for (int i = 0; i < csv.FieldCount; i++)
             {
                 try
@@ -92,16 +118,24 @@ namespace CsvToSql.FileReader
                 }
                 catch (MalformedCsvException ex)
                 {
-                    Log.Error($"ReadCsv catch MalformedCsvException : i={i}, {ex.Message}");
+                    Log.Error($"ReadCsv catch MalformedCsvException : i={i}/{csv.FieldCount}, {ex.Message.Substring(0,60)}...; ");
                     fields.Add("");
+                    exWasRaised = true;
                 }
+                if (exWasRaised) Log.Error($"MalformedCsvException was rised for\n\"{string.Join(",", fields)}\"");
             }
             return fields;
         }
         
-        private char GuessDelimeter(System.IO.FileInfo fileInfo)
+        private char GuessDelimeter(string firstLine)
         {
             return ',';
         }
+        private char GuessquotingCharacter(string firstLine)
+        {
+            var firstlineChar = firstLine.TrimStart().First<char>();
+            return firstlineChar == '"' ? '"' : '\0';
+        }
+
     }
 }

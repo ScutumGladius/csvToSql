@@ -2,7 +2,7 @@
   "profiles": {
     "CsvToSql": {
       "commandName": "Project",
-      "commandLineArgs": "--settings abc.json --truncate "
+      "commandLineArgs": "--settings ../../../settings/settings.json --truncate "
     }
   }
 }

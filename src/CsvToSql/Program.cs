@@ -21,7 +21,7 @@ namespace CsvToSql
 
             var log = new Logging();
             ArgcOptions programCfg = ProgramConfiguration.Read(log, args);
-            var importTasks = (List<ImportFileOptions>)ImportTasks.ReadFromJsonFile(log, programCfg.JsonCfgFile);
+            var importTasks = (List<ImportFileOptions>)ImportTasks.ReadFromJsonFile(log, programCfg);
 
             var csvReader = new FileReader.ReadCsv(log);
             var sqlWriter = new SqlWriter.SqlServerWriter(log);

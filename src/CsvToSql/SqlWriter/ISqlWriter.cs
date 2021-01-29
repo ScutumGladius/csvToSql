@@ -5,6 +5,7 @@ namespace CsvToSql.SqlWriter
 {
     public interface ISqlWriter
     {
-        int Write(ImportFileOptions importTask, int rowCounter, List<string> headers, List<List<string>> linesToWrite);
+        void Init(ImportFileOptions importTask, List<string> headers);
+        int Write(List<List<string>> linesToWrite);
     }
 }

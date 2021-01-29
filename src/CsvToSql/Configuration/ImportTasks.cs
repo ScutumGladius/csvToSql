@@ -12,11 +12,14 @@ namespace CsvToSql.Configuration
 {
     public static class ImportTasks
     {
-        public static IList<ImportFileOptions> ReadFromJsonFile(Logging l, string JsonCfgFile)
+        public static IList<ImportFileOptions> ReadFromJsonFile(Logging l, ArgcOptions argv)
         {
-            var fileContent = File.ReadAllText(JsonCfgFile);
+            var fileContent = File.ReadAllText(argv.JsonCfgFile);
             //importTasks = (List<ImportFileOptions>)importTasks.ToObject<IList<ImportFileOptions>>(); ' Boom :(
             List<ImportFileOptions> importTasks = (List<ImportFileOptions>)ReadTasks(l, fileContent);
+
+            // Truncate from commandLine have a priority
+            importTasks.ForEach(it => { it.truncate = argv.Truncate; it.ImportDateTime = argv.ImportDateTime; });
             return importTasks;
         }
 
@@ -46,6 +49,8 @@ namespace CsvToSql.Configuration
                 importFileOptions.columnMapping = GetTokenAsDictionary(l, importFile, "columnMapping");
                 importFileOptions.batchSize = Math.Abs(GetTokenAsInt(l, importFile, "batchSize", 1000));
                 importFileOptions.delimiter = GetTokenAsString(l, importFile, "delimiter", "");
+                importFileOptions.quoting = GetTokenAsString(l, importFile, "quoting", "");
+                importFileOptions.truncate = GetTokenAsBoolean(l, importFile, "truncate", false);
 
                 importFiles.Add(importFileOptions);
             }

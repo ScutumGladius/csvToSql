@@ -19,7 +19,9 @@ namespace CsvToSql.Core
         public bool csv { get; set; } // true || false
         public int batchSize { get; set; }
         public string delimiter { get; set; }
-        
+        public string quoting { get; set; }
+        public bool truncate { get; set; }
+        public DateTime ImportDateTime { get; set; } // from args
 
         public Dictionary<string, string> columnMapping { get; set; }
     }

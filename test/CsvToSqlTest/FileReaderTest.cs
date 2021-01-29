@@ -57,15 +57,25 @@ namespace CsvToSqlTest
         {
 
             private readonly Logging Log;
+            private ImportFileOptions ImportTask = null;
+            private List<string> Headers = null;
 
             public SqlServerWriterMoq(Logging log)
             {
                 Log = log;
             }
 
-            public int Write(ImportFileOptions importTask, int rowCounter, List<string> headers, List<List<string>> linesToWrite)
+            public void Init(ImportFileOptions importTask, List<string> headers)
             {
-                Log.Debug($"SqlServerWriter: Write for '{importTask.file}'");
+                ImportTask = importTask;
+                Headers = headers;
+                Log.Debug($"SqlServerWriter: init for '{ImportTask.file}'");
+            }
+
+
+            public int Write(List<List<string>> linesToWrite)
+            {
+                Log.Debug($"SqlServerWriter: Write; Count='{linesToWrite.Count}'");
                 return 0;
             }
         }

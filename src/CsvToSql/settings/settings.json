@@ -1,0 +1,16 @@
+{
+"importFiles": 
+	[
+        {
+            "connectionString": "Server=localhost;Database=EUC;User Id=SDMC_User;Password=SDMC_User;MultipleActiveResultSets=true;",
+            "file": "d:/TNT/20210118110419_20210118_Clients_SE.csv",
+            "table": "OMS",
+			"columnMapping": [
+                {
+                    "KEY": "VALUE",
+                    "SAL code": "SAL",
+                }
+            ]
+        }
+    ]
+}
