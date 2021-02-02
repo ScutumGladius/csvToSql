@@ -41,7 +41,7 @@ namespace CsvToSql.Configuration
                 importFileOptions.col = GetTokenAsInt(l, importFile, "col", -1);
                 importFileOptions.skipline = GetTokenAsInt(l, importFile, "skipline", -1);
 
-                importFileOptions.table = GetTokenAsString(l, importFile, "table", "");
+                importFileOptions.table = GetTokenAsString(l, importFile, "table", string.Format($"{DateTime.Now.Year}{DateTime.Now.Month}{DateTime.Now.Day}{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}")); 
                 importFileOptions.prefix = GetTokenAsString(l, importFile, "prefix", "");
                 importFileOptions.key = GetTokenAsString(l, importFile, "key", "");
                 importFileOptions.macFix = GetTokenAsString(l, importFile, "macFix", "");
