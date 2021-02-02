@@ -120,7 +120,8 @@ Beginnt ein Key mit ##ImportDate, wird kein Inhalt aus der Datei herangenommen, 
     "source_vlan": "source_vlan",
     "target_vlan": "target_vlan",
     "confirmation": "confirmation",
-    "##ImportDate": "DCImportDate"
+    "##ImportDate": "DCImportDate",
+    "##ImportFileName": "DCSource"
 }
 ```
 

@@ -10,6 +10,8 @@ namespace CsvToSql.SqlWriter
     class SqlCmdBuilder
     {
         private ImportFileOptions ImportTask;
+        private string ImportDateTimeString;
+
 
         public SqlCmdBuilder(ImportFileOptions importTask)
         {
@@ -18,9 +20,34 @@ namespace CsvToSql.SqlWriter
 
         internal List<SqlField> GetHeaderFields(List<string> headers)
         {
-            return headers
-            .Select(x => new SqlField { Name = x, SqlType = System.Data.SqlDbType.VarChar })
-            .ToList();
+            SetSqlImportDate();
+
+            var sqlFieldsHeaders = headers
+                .Select(x => HeaderLineToSqlField(x))
+                .ToList();
+
+            var importDayKey = "##ImportDate";
+            if (ImportTask.columnMapping.ContainsKey(importDayKey))
+            {
+                sqlFieldsHeaders.Add(new SqlField { Name = ImportTask.columnMapping[importDayKey], SqlType = System.Data.SqlDbType.DateTime });
+            }
+            return sqlFieldsHeaders;
+        }
+
+        private void SetSqlImportDate()
+        {
+            const string fmt120 = "yyyy-MM-dd HH:mm:ss";
+            var dt120 = ImportTask.ImportDateTime.ToString(fmt120);
+            ImportDateTimeString = string.Format($"CONVERT(DATETIME, '{dt120}', 120)");
+        }
+
+        private SqlField HeaderLineToSqlField(string fieldName) {
+            var fName = fieldName;
+            var sqlType = System.Data.SqlDbType.VarChar;
+            if (ImportTask.columnMapping.ContainsKey(fieldName)) {
+                fName = ImportTask.columnMapping[fieldName];
+            }
+            return new SqlField { Name = fName, SqlType = sqlType };
         }
 
         internal string GetCreateTableStatement(List<SqlField> headerFields)
@@ -33,12 +60,12 @@ namespace CsvToSql.SqlWriter
             );
             GO;*/
 
-            var body = headerFields.Select(f => FieldToCreateRow(f));
+            var body = headerFields.Select(f => FieldToCreateRow(ref f));
             return string.Format($"IF OBJECT_ID('{ImportTask.table}', 'U') IS NULL\n\tCREATE TABLE [{ImportTask.table}] ( {string.Join(",", body)} );");
         }
 
 
-        internal string FieldToCreateRow(SqlField sqlField)
+        internal string FieldToCreateRow(ref SqlField sqlField)
         {
             switch (sqlField.SqlType)
             {
@@ -47,7 +74,33 @@ namespace CsvToSql.SqlWriter
                 case System.Data.SqlDbType.Int:
                     return string.Format($"[{sqlField.Name}] [int] NULL");
                 case System.Data.SqlDbType.VarChar:
-                    return string.Format($"[{sqlField.Name}] [nchar](50) NULL");
+                    if (sqlField.Name.ToLower().Contains("com") ||
+                          sqlField.Name.ToLower().Contains("review") ||
+                          sqlField.Name.ToLower().Contains("hist") ||
+                          sqlField.Name.ToLower().Contains("desc") ||
+                          sqlField.Name.ToLower().Contains("info") ||
+                          sqlField.Name.ToLower().Contains("cmnt") ||
+                          sqlField.Name.ToLower().Contains("reason")
+                          )
+                    {
+                        sqlField.Length = 512;
+                        return string.Format($"[{sqlField.Name}] [nvarchar](512) NULL");
+                    }
+                    if (sqlField.Name.ToLower().Contains("code") ||
+                        sqlField.Name.ToLower().Contains("date") ||
+                        sqlField.Name.ToLower().Contains("pmo")  ||
+                        sqlField.Name.ToLower().Contains("impl") ||
+                        sqlField.Name.ToLower().Contains("total") ||
+                        sqlField.Name.ToLower().Contains("dez") ||
+                        sqlField.Name.ToLower().Contains("scope")
+                        )
+                    {
+                        sqlField.Length = 32;
+                        return string.Format($"[{sqlField.Name}] [nvarchar](32) NULL");
+                    }
+                    sqlField.Length = 128;
+                    return string.Format($"[{sqlField.Name}] [nvarchar](128) NULL");
+
                 default:
                     throw new Exception($"Unknown sqlField.SqlType {sqlField.SqlType}.");
             }
@@ -74,7 +127,14 @@ namespace CsvToSql.SqlWriter
             List<string> acc = new List<string>();     
             for (int i = 0; i < headers.Count; i++)
             {
-                acc.Add(string.Format($"'{rowToWrite[i].Replace("'", "''")}'"));
+                if (headers[i].SqlType == System.Data.SqlDbType.DateTime)
+                {
+                    acc.Add(ImportDateTimeString);
+                }
+                else
+                {
+                    acc.Add(string.Format($"'{rowToWrite[i].Left(headers[i].Length).Replace("'", "''")}'"));
+                }
             }
             return string.Format($"({string.Join(", ", acc )})");
         }
@@ -83,6 +143,25 @@ namespace CsvToSql.SqlWriter
         {
             var fNames = headers.Select(o => string.Format($"[{o.Name}]"));
             return string.Format($"INSERT INTO [{ImportTask.table}] ({string.Join(", ", fNames)}) VALUES ");
+        }
+
+    }
+    public static class StringExtensions
+    {
+        public static string Left(this string value, int maxLength)
+        {
+#if DEBUG            
+            maxLength = 500;
+#endif
+
+
+            if (string.IsNullOrEmpty(value)) return value;
+            maxLength = Math.Abs(maxLength);
+
+            return (value.Length <= maxLength
+                   ? value
+                   : value.Substring(0, maxLength)
+                   );
         }
     }
 }

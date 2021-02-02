@@ -38,13 +38,13 @@ namespace CsvToSqlTest
 
             var importTasks = (List<ImportFileOptions>)CsvToSql.Configuration.ImportTasks.ReadTasks(log, jsonSettings);
 
-            var sqlWriter = new SqlServerWriter(log);
+            var sqlWriter = new SqlServerWriter(log, "");
 
-            var headers = new List<string>(){ "head1", "head2"};
+            var headers = new List<string>() { "head1", "head2" };
             var linesToWrite = new List<List<string>>() {
                 new List<string>(){ "a0", "a1", "a2"},
                 new List<string>(){ "b0", "b1", "b2"}
-            }; 
+            };
             // Act
             sqlWriter.Init(importTasks.First(), headers);
 
@@ -71,7 +71,7 @@ namespace CsvToSqlTest
 
             var importTasks = (List<ImportFileOptions>)CsvToSql.Configuration.ImportTasks.ReadTasks(log, jsonSettings);
 
-            var sqlWriter = new SqlServerWriter(log);
+            var sqlWriter = new SqlServerWriter(log, "");
 
             var headers = new List<string>() { "head1", "head2" };
             // Act
@@ -105,7 +105,7 @@ namespace CsvToSqlTest
 
             var importTasks = (List<ImportFileOptions>)CsvToSql.Configuration.ImportTasks.ReadTasks(log, jsonSettings);
 
-            var sqlWriter = new SqlServerWriter(log);
+            var sqlWriter = new SqlServerWriter(log, "");
 
             var headers = new List<string>() { "head1", "head2" };
             // Act
@@ -136,7 +136,7 @@ namespace CsvToSqlTest
 
             var importTasks = (List<ImportFileOptions>)CsvToSql.Configuration.ImportTasks.ReadTasks(log, jsonSettings);
 
-            var sqlWriter = new SqlServerWriter(log);
+            var sqlWriter = new SqlServerWriter(log, "");
 
             var headers = new List<string>() { "head1", "head2" };
             // Act
@@ -166,7 +166,7 @@ namespace CsvToSqlTest
 
             var importTasks = (List<ImportFileOptions>)CsvToSql.Configuration.ImportTasks.ReadTasks(log, jsonSettings);
 
-            var sqlWriter = new SqlServerWriter(log);
+            var sqlWriter = new SqlServerWriter(log, "");
 
             var headers = new List<string>() { "head1", "head2", "head3" };
             var linesToWrite = new List<List<string>>() {
@@ -179,9 +179,140 @@ namespace CsvToSqlTest
             // Act
 
             string insertSql = sqlWriter.GetInsertStatements(linesToWrite);
+
             // Assert
-            Assert.AreEqual(sqlWriter.GetHeaderFields().Count, 2); // { "head1", "head2"}
+            Assert.IsTrue(sqlWriter != null);
+            Assert.AreEqual(sqlWriter.GetHeaderFields().Count, 3); // { "head1", "head2", "head3"}
+            Assert.IsTrue(insertSql.Contains("INSERT INTO"));
+        }
+        [Test]
+        public void SqlWriterTest_InitHeadersWithcolumnMapping()
+        {
+
+            // Arrange
+            var jsonSettings = @"
+            {
+            ""importFiles"": 
+                [
+                    {
+                        ""file"": ""..\\..\\..\\..\\TestCsv\\simpleComma.csv"",
+                        ""batchSize"": 4,
+                        ""columnMapping"": [
+                            {
+                                ""head1"": ""NewHeadOne"",
+                                ""head2"": ""NewHeadTwo""
+                            }
+                        ]
+                    }
+                ]
+            }";
+
+            var importTasks = (List<ImportFileOptions>)CsvToSql.Configuration.ImportTasks.ReadTasks(log, jsonSettings);
+
+            var sqlWriter = new SqlServerWriter(log, "");
+
+            var headers = new List<string>() { "head1", "head2", "head3" };
+
+            // Act
+            sqlWriter.Init(importTasks.First(), headers);
+            var headerFields = sqlWriter.GetHeaderFields();
+
+            // Assert
+            Assert.AreEqual(headerFields.Count, 3); // { "NewHeadOne", "NewHeadTwo", "head3"}
+            Assert.AreEqual(headerFields[0].Name, "NewHeadOne");
+            Assert.AreEqual(headerFields[1].Name, "NewHeadTwo");
+            Assert.AreEqual(headerFields[2].Name, "head3");
             Assert.IsTrue(sqlWriter != null);
         }
+
+        [Test]
+        public void SqlWriterTest_InitHeadersWithcolumnMappingImportDate()
+        {
+
+            // Arrange
+            var jsonSettings = @"
+            {
+            ""importFiles"": 
+                [
+                    {
+                        ""file"": ""..\\..\\..\\..\\TestCsv\\simpleComma.csv"",
+                        ""batchSize"": 4,
+                        ""columnMapping"": [
+                            {
+                                ""head1"": ""NewHeadOne"",
+                                ""head2"": ""NewHeadTwo"",
+                                ""##ImportDate"" : ""DCImportDate""
+                            }
+                        ]
+                    }
+                ]
+            }";
+
+            var importTasks = (List<ImportFileOptions>)CsvToSql.Configuration.ImportTasks.ReadTasks(log, jsonSettings);
+
+            var sqlWriter = new SqlServerWriter(log, "");
+
+            var headers = new List<string>() { "head1", "head2", "head3" };
+
+            // Act
+            sqlWriter.Init(importTasks.First(), headers);
+            var headerFields = sqlWriter.GetHeaderFields();
+
+            // Assert
+            Assert.AreEqual(headerFields.Count, 4); // { "NewHeadOne", "NewHeadTwo", "head3", "DCImportDate"}
+            Assert.AreEqual(headerFields[0].Name, "NewHeadOne");
+            Assert.AreEqual(headerFields[1].Name, "NewHeadTwo");
+            Assert.AreEqual(headerFields[2].Name, "head3");
+            Assert.AreEqual(headerFields[3].Name, "DCImportDate");
+            Assert.IsTrue(sqlWriter != null);
+        }
+
+        public void SqlWriterTest_GetInsertStatmentsWithImportDate()
+        {
+
+            // Arrange
+            var jsonSettings = @"
+            {
+            ""importFiles"": 
+                [
+                    {
+                        ""file"": ""..\\..\\..\\..\\TestCsv\\simpleComma.csv"",
+                        ""batchSize"": 4,
+                        ""columnMapping"": [
+                            {
+                                ""head1"": ""NewHeadOne"",
+                                ""head2"": ""NewHeadTwo"",
+                                ""##ImportDate"" : ""DCImportDate""
+                            }
+                        ]
+                    }
+                ]
+            }";
+
+            var importTasks = (List<ImportFileOptions>)CsvToSql.Configuration.ImportTasks.ReadTasks(log, jsonSettings);
+
+            var sqlWriter = new SqlServerWriter(log, "");
+
+            var headers = new List<string>() { "head1", "head2", "head3" };
+            var linesToWrite = new List<List<string>>() {
+                new List<string>(){ "a0", "a1", "a2"},
+                new List<string>(){ "b0", "b1", "b2"}
+            };
+
+            sqlWriter.Init(importTasks.First(), headers);
+
+            // Act
+
+            string insertSql = sqlWriter.GetInsertStatements(linesToWrite);
+
+            // Assert
+            Assert.IsTrue(sqlWriter != null);
+            Assert.AreEqual(sqlWriter.GetHeaderFields().Count, 4); // { "head1", "head2", "head3", "DCImportDate"}
+            Assert.IsTrue(insertSql.Contains("INSERT INTO"));
+            Assert.IsTrue(insertSql.Contains("CONVERT(DATETIME"));
+        }
+
     }
 }
+
+

@@ -24,6 +24,11 @@ namespace CsvToSql.FileReader
             List<List<string>> batchLineFields = new List<List<string>>();
             var fileInfo = new System.IO.FileInfo(importTask.file);
 
+            if (!System.IO.File.Exists(importTask.file)) {
+                Log.Error($"ReadCSV : '{importTask.file}' not exists!");
+                return -1;
+            }
+
             var firstLine = ReadFirstLine(fileInfo);
 
             Char delimiter = string.IsNullOrWhiteSpace(importTask.delimiter) ? GuessDelimeter(firstLine) : importTask.delimiter.First<char>();

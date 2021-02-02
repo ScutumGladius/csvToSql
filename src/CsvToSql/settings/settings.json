@@ -1,14 +1,39 @@
 {
 "importFiles": 
 	[
+                {
+            "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
+            "file": "d:/TNT/survey_lml_pmo.csv",
+            "table": "SurveyLmlPmo",
+			"truncate": true,
+			"batchSize": 1000,
+			"columnMapping": [
+                {
+					"##ImportDate" : "DCImportDate"
+                }
+            ]
+        },
+		{
+            "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
+            "file": "d:/TNT/seuser_Disqualification_2021-01-25.csv",
+            "table": "SeuserDisqualification",
+			"truncate": true,
+			"columnMapping": [
+                {
+					"##ImportDate" : "DCImportDate"
+                }
+            ]
+        },
         {
-            "connectionString": "Server=localhost;Database=EUC;User Id=SDMC_User;Password=SDMC_User;MultipleActiveResultSets=true;",
+            "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
             "file": "d:/TNT/20210118110419_20210118_Clients_SE.csv",
             "table": "OMS",
+			"truncate": true,
 			"columnMapping": [
                 {
                     "KEY": "VALUE",
                     "SAL code": "SAL",
+					"##ImportDate" : "DCImportDate"
                 }
             ]
         }

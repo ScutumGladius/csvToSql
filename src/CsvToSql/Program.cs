@@ -15,16 +15,17 @@ namespace CsvToSql
 
         static void Main(string[] args)
         {
-            var appSettings = new ConfigurationBuilder()
+            IConfiguration appSettings = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json").Build();
+            var defaultConnectionString = appSettings.GetSection("ConnectionStrings").GetChildren().First().Value;
 
             var log = new Logging();
             ArgcOptions programCfg = ProgramConfiguration.Read(log, args);
             var importTasks = (List<ImportFileOptions>)ImportTasks.ReadFromJsonFile(log, programCfg);
 
             var csvReader = new FileReader.ReadCsv(log);
-            var sqlWriter = new SqlWriter.SqlServerWriter(log);
+            var sqlWriter = new SqlWriter.SqlServerWriter(log, defaultConnectionString);
 
             var executor = new TaskExecutor(log, csvReader, sqlWriter);
             importTasks.ForEach(impTask => executor.Run(impTask));
