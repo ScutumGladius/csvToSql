@@ -51,6 +51,8 @@ namespace CsvToSql.Configuration
                 importFileOptions.delimiter = GetTokenAsString(l, importFile, "delimiter", "");
                 importFileOptions.quoting = GetTokenAsString(l, importFile, "quoting", "");
                 importFileOptions.truncate = GetTokenAsBoolean(l, importFile, "truncate", false);
+                importFileOptions.saveMode = GetTokenAsBoolean(l, importFile, "saveMode", false);
+                importFileOptions.forceCreateTable = GetTokenAsBoolean(l, importFile, "forceCreateTable", false);
 
                 importFiles.Add(importFileOptions);
             }

@@ -42,6 +42,9 @@ namespace CsvToSql.SqlWriter
 
             sqlServerService = new SqlServerService(Log, getSqlConnectionString());
 
+            // Drop table
+            sqlServerService.simpleExecQuery(GetDropTableStatement());
+
             // Create table
             sqlServerService.simpleExecQuery(GetCreateTableStatement());
 
@@ -75,6 +78,12 @@ namespace CsvToSql.SqlWriter
         {
             return sqlCmdBuilder.GetCreateTableStatement(HeaderFields);
         }
+
+        public String GetDropTableStatement()
+        {
+            return sqlCmdBuilder.GetDropTableStatement();
+        }
+
         public String GetTruncateTableStatement()
         {
             return sqlCmdBuilder.GetTruncateTableStatement();

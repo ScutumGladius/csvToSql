@@ -1,4 +1,5 @@
 ﻿using CsvToSql.Core;
+using CsvToSql.Exstensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -11,6 +12,7 @@ namespace CsvToSql.SqlWriter
     {
         private ImportFileOptions ImportTask;
         private string ImportDateTimeString;
+        private string ImportExactFileName;
 
 
         public SqlCmdBuilder(ImportFileOptions importTask)
@@ -20,12 +22,48 @@ namespace CsvToSql.SqlWriter
 
         internal List<SqlField> GetHeaderFields(List<string> headers)
         {
-            SetSqlImportDate();
 
             var sqlFieldsHeaders = headers
                 .Select(x => HeaderLineToSqlField(x))
                 .ToList();
 
+            sqlFieldsHeaders = HandleSqlImportDate(sqlFieldsHeaders); // "##ImportDate": "DCImportDate"
+            sqlFieldsHeaders = HandleSqlDataSource(sqlFieldsHeaders); // "##ImportFileName": "DCSource" Or "**20200911132530_20200907_Clients_SE.csv": "DCSource"
+
+            return sqlFieldsHeaders;
+        }
+
+        private List<SqlField> HandleSqlDataSource(List<SqlField> sqlFieldsHeaders)
+        {
+            // 1. Handle "##ImportFileName": "DCSource"
+            var importFileName = "##ImportFileName";
+            if (ImportTask.columnMapping.ContainsKey(importFileName))
+            {
+                sqlFieldsHeaders.Add(new SqlField { Name = ImportTask.columnMapping[importFileName], SqlType = System.Data.SqlDbType.Structured });
+            }
+
+            ImportExactFileName = "";
+            // 2. Handle "**ExactFileName.csv": "DCSource"
+            foreach (var item in ImportTask.columnMapping)
+            {
+                var fileNameKey = item.Key;
+                var fieldName = item.Value;
+                if (fileNameKey.StartsWith("**")) {
+                    ImportExactFileName = fileNameKey.Replace("**", "");
+                    sqlFieldsHeaders.Add(new SqlField { Name = fieldName, SqlType = System.Data.SqlDbType.Money });
+                }
+            }
+            return sqlFieldsHeaders;
+        }
+
+        private List<SqlField> HandleSqlImportDate(List<SqlField> sqlFieldsHeaders)
+        {
+            //1. SetSqlImportDate
+            const string fmt120 = "yyyy-MM-dd HH:mm:ss";
+            var dt120 = ImportTask.ImportDateTime.ToString(fmt120);
+            ImportDateTimeString = string.Format($"CONVERT(DATETIME, '{dt120}', 120)");
+            
+            //2. Add to headers, if nesessary
             var importDayKey = "##ImportDate";
             if (ImportTask.columnMapping.ContainsKey(importDayKey))
             {
@@ -34,11 +72,11 @@ namespace CsvToSql.SqlWriter
             return sqlFieldsHeaders;
         }
 
-        private void SetSqlImportDate()
+        internal string GetDropTableStatement()
         {
-            const string fmt120 = "yyyy-MM-dd HH:mm:ss";
-            var dt120 = ImportTask.ImportDateTime.ToString(fmt120);
-            ImportDateTimeString = string.Format($"CONVERT(DATETIME, '{dt120}', 120)");
+            return ImportTask.forceCreateTable ?
+                string.Format($"IF OBJECT_ID('{ImportTask.table}', 'U') IS NULL\n\tDROP TABLE [{ImportTask.table}];") :
+                "";
         }
 
         private SqlField HeaderLineToSqlField(string fieldName) {
@@ -69,10 +107,17 @@ namespace CsvToSql.SqlWriter
         {
             switch (sqlField.SqlType)
             {
-                case System.Data.SqlDbType.DateTime:
+                case System.Data.SqlDbType.DateTime:   //"##ImportDate"
                     return string.Format($"[{sqlField.Name}] [datetime] NULL");
+
+                case System.Data.SqlDbType.Structured: // "##ImportFileName"
+                case System.Data.SqlDbType.Money:      // "**ExactFileName.csv"
+                    sqlField.Length = 128;
+                    return string.Format($"[{sqlField.Name}] [nvarchar]({sqlField.Length}) NULL");
+
                 case System.Data.SqlDbType.Int:
                     return string.Format($"[{sqlField.Name}] [int] NULL");
+
                 case System.Data.SqlDbType.VarChar:
                     if (sqlField.Name.ToLower().Contains("com") ||
                           sqlField.Name.ToLower().Contains("review") ||
@@ -84,11 +129,16 @@ namespace CsvToSql.SqlWriter
                           )
                     {
                         sqlField.Length = 512;
-                        return string.Format($"[{sqlField.Name}] [nvarchar](512) NULL");
+                        return string.Format($"[{sqlField.Name}] [nvarchar]({sqlField.Length}) NULL");
+                    }
+                    if (sqlField.Name.ToLower().Contains("path") )
+                    {
+                        sqlField.Length = 256;
+                        return string.Format($"[{sqlField.Name}] [nvarchar]({sqlField.Length}) NULL");
                     }
                     if (sqlField.Name.ToLower().Contains("code") ||
                         sqlField.Name.ToLower().Contains("date") ||
-                        sqlField.Name.ToLower().Contains("pmo")  ||
+                        sqlField.Name.ToLower().Contains("pmo") ||
                         sqlField.Name.ToLower().Contains("impl") ||
                         sqlField.Name.ToLower().Contains("total") ||
                         sqlField.Name.ToLower().Contains("dez") ||
@@ -96,10 +146,10 @@ namespace CsvToSql.SqlWriter
                         )
                     {
                         sqlField.Length = 32;
-                        return string.Format($"[{sqlField.Name}] [nvarchar](32) NULL");
+                        return string.Format($"[{sqlField.Name}] [nvarchar]({sqlField.Length}) NULL");
                     }
                     sqlField.Length = 128;
-                    return string.Format($"[{sqlField.Name}] [nvarchar](128) NULL");
+                    return string.Format($"[{sqlField.Name}] [nvarchar]({sqlField.Length}) NULL");
 
                 default:
                     throw new Exception($"Unknown sqlField.SqlType {sqlField.SqlType}.");
@@ -127,13 +177,23 @@ namespace CsvToSql.SqlWriter
             List<string> acc = new List<string>();     
             for (int i = 0; i < headers.Count; i++)
             {
-                if (headers[i].SqlType == System.Data.SqlDbType.DateTime)
+                switch (headers[i].SqlType)
                 {
-                    acc.Add(ImportDateTimeString);
-                }
-                else
-                {
-                    acc.Add(string.Format($"'{rowToWrite[i].Left(headers[i].Length).Replace("'", "''")}'"));
+                    case System.Data.SqlDbType.DateTime:   //"##ImportDate"
+                        acc.Add(ImportDateTimeString);
+                        break;
+                    case System.Data.SqlDbType.Structured: //"##ImportFileName"
+                        acc.Add(string.Format($"'{ImportTask.file.Replace("'", "''")}'"));
+                        break;
+                    case System.Data.SqlDbType.Money:      //"**ExactFileName.csv"
+                        acc.Add(string.Format($"'{ImportExactFileName.Replace("'", "''")}'"));
+                        break;
+                    default:
+                        var varCharValue = rowToWrite[i];
+                        if (ImportTask.saveMode)
+                            varCharValue = varCharValue.Left(headers[i].Length - 1);
+                        acc.Add(string.Format($"'{varCharValue.Replace("'", "''")}'"));
+                        break;
                 }
             }
             return string.Format($"({string.Join(", ", acc )})");
@@ -145,23 +205,5 @@ namespace CsvToSql.SqlWriter
             return string.Format($"INSERT INTO [{ImportTask.table}] ({string.Join(", ", fNames)}) VALUES ");
         }
 
-    }
-    public static class StringExtensions
-    {
-        public static string Left(this string value, int maxLength)
-        {
-#if DEBUG            
-            maxLength = 500;
-#endif
-
-
-            if (string.IsNullOrEmpty(value)) return value;
-            maxLength = Math.Abs(maxLength);
-
-            return (value.Length <= maxLength
-                   ? value
-                   : value.Substring(0, maxLength)
-                   );
-        }
     }
 }

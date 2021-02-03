@@ -32,6 +32,11 @@ Die Settings-Datei besteht aus einer Liste zu importierender Dateien im Schlüss
             "prefix": "oms:",
             "key": "SerialNumber",
             "macFix":  "macAddress",
+            "delimiter": ";",
+            "batchSize": 100,
+            "truncate": true,
+            "quoting" : "",
+            "saveMode": false,
             "columnMapping": [
                 {
                     "SAL code": "SAL",
@@ -55,6 +60,7 @@ Die Settings-Datei besteht aus einer Liste zu importierender Dateien im Schlüss
             "table": "ADPL",
             "prefix": "apdl:",
             "key": "host_name",
+            "truncate": false,
             "columnMapping": [
                 {
                     "host_name": "host_name",
@@ -79,6 +85,10 @@ Die Settings-Datei besteht aus einer Liste zu importierender Dateien im Schlüss
 * locationFix: [optional] Gibt den Spaltenamen aus Excel/CSV an, in der sich eine Location befindet. Wird dieser angegeben, so werden von allen gelesenen Locations der Teil vor dem Minus entfernt.
 * prefix: Historisch gewachsen, wird eigentlich nicht benötigt, muss aber trotzdem vorhanden sein und mit einem Doppelpunkt enden
 * key: Historisch gewachsen, wird eigentlich nicht benötigt, muss aber trotzdem vorhanden sein
+* truncate: Soll die bisherigen Inhalt der SQL-Tabelle gelöscht werden? (default - false)
+* batchSize: Die Anzahl der Insert-Befehlen in einer SQL-Abfrage. (default - 1000)
+* saveMode: Prevent error "String or binary data would be truncated." Adjust the length of the Data to the field size. (default - false)
+* forceCreateTable: Die alte SQL-Tabelle wird gelöscht und die Neue angelegt. (default - false)
 
 ##### Excel
 
