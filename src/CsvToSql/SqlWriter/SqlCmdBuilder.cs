@@ -75,7 +75,7 @@ namespace CsvToSql.SqlWriter
         internal string GetDropTableStatement()
         {
             return ImportTask.forceCreateTable ?
-                string.Format($"IF OBJECT_ID('{ImportTask.table}', 'U') IS NULL\n\tDROP TABLE [{ImportTask.table}];") :
+                string.Format($"IF OBJECT_ID('{ImportTask.table}', 'U') IS NOT NULL\n\tDROP TABLE [{ImportTask.table}];") :
                 "";
         }
 

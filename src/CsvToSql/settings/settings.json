@@ -3,10 +3,11 @@
 	[
                 {
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/_TNT/survey_lml_pmo.csv",
+            "file": "d:/TNT/survey_lml_pmo.csv",
             "table": "SurveyLmlPmo",
 			"truncate": true,
 			"batchSize": 1000,
+			"saveMode": true,
 			"columnMapping": [
                 {
 					"##ImportDate" : "DCImportDate"
@@ -15,7 +16,7 @@
         },
 		{
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/_TNT/seuser_Disqualification_2021-01-25.csv",
+            "file": "d:/TNT/seuser_Disqualification_2021-01-25.csv",
             "table": "SeuserDisqualification",
 			"truncate": true,
 			"columnMapping": [
@@ -26,8 +27,8 @@
         },
         {
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/_TNT/20210118110419_20210118_Clients_SE.csv",
-            "table": "OMS",
+            "file": "d:/TNT/20210118110419_20210118_Clients_SE.csv",
+            "table": "ADPL",
 			"truncate": true,
 			"columnMapping": [
                 {
@@ -37,7 +38,7 @@
         },
         {
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/_TNT/u_cmdb_ci_dwp_prov.csv",
+            "file": "d:/TNT/u_cmdb_ci_dwp_prov.csv",
             "table": "CMDB",
 			"truncate": true,
 			"columnMapping": [
