@@ -4,6 +4,7 @@ using CsvToSql.SqlWriter;
 using LumenWorks.Framework.IO.Csv;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -21,6 +22,9 @@ namespace CsvToSql.FileReader
         public int Read(ImportFileOptions importTask, ISqlWriter sqlWriter) {
             Log.Debug($"ReadCsv for '{importTask.file}'");
 
+            Stopwatch _timer = new Stopwatch();
+            _timer.Start();
+            
             List<List<string>> batchLineFields = new List<List<string>>();
             var fileInfo = new System.IO.FileInfo(importTask.file);
 
@@ -70,7 +74,15 @@ namespace CsvToSql.FileReader
                 Log.Error($"ReadCsv catch exception : {ex.Message}");
                 return -1;
             }
+
+            _timer.Stop();
+
+            var timeSpan = TimeSpan.FromMilliseconds(_timer.ElapsedMilliseconds);
+            Log.Debug($"Import from '{importTask.file}' takes {_timer.ElapsedMilliseconds / 1000.0} seconds or {timeSpan.Minutes}:{timeSpan.Seconds} Minutes.");
+            sqlWriter.UpdateStatusTable(rowCounter, timeSpan);
+
             return rowCounter;
+
         }
 
 

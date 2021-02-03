@@ -93,5 +93,10 @@ namespace CsvToSql.SqlWriter
         {
             return sqlCmdBuilder.GetInsertStatements(HeaderFields, linesToWrite);
         }
+
+        public void UpdateStatusTable(int rowCounter, TimeSpan timeSpan)
+        {
+            sqlServerService.simpleExecQuery(sqlCmdBuilder.GetUpdateTatusStatement(rowCounter, timeSpan));
+        }
     }
 }

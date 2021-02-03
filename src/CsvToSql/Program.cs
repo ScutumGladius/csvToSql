@@ -6,6 +6,7 @@ using CsvToSql.Core;
 using Microsoft.Extensions.Configuration;
 using CsvToSql.Engine;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace CsvToSql
 {
@@ -29,7 +30,7 @@ namespace CsvToSql
 
             var executor = new TaskExecutor(log, csvReader, sqlWriter);
             importTasks.ForEach(impTask => executor.Run(impTask));
-
+ 
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CsvToSql.Core;
+using System;
 using System.Collections.Generic;
 
 namespace CsvToSql.SqlWriter
@@ -7,5 +8,6 @@ namespace CsvToSql.SqlWriter
     {
         void Init(ImportFileOptions importTask, List<string> headers);
         int Write(List<List<string>> linesToWrite);
+        void UpdateStatusTable(int rowCounter, TimeSpan timeSpan);
     }
 }

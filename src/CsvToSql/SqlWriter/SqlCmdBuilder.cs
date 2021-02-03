@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
+using System.Security;
 
 namespace CsvToSql.SqlWriter
 {
@@ -75,8 +76,18 @@ namespace CsvToSql.SqlWriter
         internal string GetDropTableStatement()
         {
             return ImportTask.forceCreateTable ?
-                string.Format($"IF OBJECT_ID('{ImportTask.table}', 'U') IS NOT NULL\n\tDROP TABLE [{ImportTask.table}];") :
+                string.Format($"IF OBJECT_ID('{ImportTask.table.Replace("'", "''")}', 'U') IS NOT NULL\n\tDROP TABLE [{ImportTask.table.Replace("'", "''")}];") :
                 "";
+        }
+
+        internal string GetUpdateTatusStatement(int rowCounter, TimeSpan timeSpan)
+        {
+            //var comment = string.Format($"File \"{ImportTask.file}\" is imported by \"{(Environment.UserDomainName + "\\" + Environment.UserName)}\". {rowCounter} rows inserted. It takes {timeSpan.TotalMilliseconds / 1000.0} Seconds or {timeSpan.Minutes}:{timeSpan.Seconds} Minutes.");
+            var comment = string.IsNullOrWhiteSpace(ImportTask.comment) ?
+                string.Format($"File \"{ImportTask.file}\" imported. {rowCounter} rows inserted. It took {timeSpan.TotalMilliseconds / 1000.0} Seconds or {timeSpan.Minutes}:{timeSpan.Seconds} Minutes.") :
+                ImportTask.comment;
+
+            return string.Format($"IF OBJECT_ID('TABLESTATUS', 'U') IS NOT NULL\n\tINSERT INTO [TABLESTATUS] ([Tablename],[Comment],[Imported]) VALUES('{ImportTask.table.Replace("'", "''")}', '{comment.Replace("'", "''")}', GETDATE());");
         }
 
         private SqlField HeaderLineToSqlField(string fieldName) {
@@ -99,7 +110,7 @@ namespace CsvToSql.SqlWriter
             GO;*/
 
             var body = headerFields.Select(f => FieldToCreateRow(ref f));
-            return string.Format($"IF OBJECT_ID('{ImportTask.table}', 'U') IS NULL\n\tCREATE TABLE [{ImportTask.table}] ( {string.Join(",", body)} );");
+            return string.Format($"IF OBJECT_ID('{ImportTask.table.Replace("'", "''")}', 'U') IS NULL\n\tCREATE TABLE [{ImportTask.table}] ( {string.Join(",", body)} );");
         }
 
 
@@ -108,15 +119,15 @@ namespace CsvToSql.SqlWriter
             switch (sqlField.SqlType)
             {
                 case System.Data.SqlDbType.DateTime:   //"##ImportDate"
-                    return string.Format($"[{sqlField.Name}] [datetime] NULL");
+                    return string.Format($"[{sqlField.Name.Replace("'", "''")}] [datetime] NULL");
 
                 case System.Data.SqlDbType.Structured: // "##ImportFileName"
                 case System.Data.SqlDbType.Money:      // "**ExactFileName.csv"
                     sqlField.Length = 128;
-                    return string.Format($"[{sqlField.Name}] [nvarchar]({sqlField.Length}) NULL");
+                    return string.Format($"[{sqlField.Name.Replace("'", "''")}] [nvarchar]({sqlField.Length}) NULL");
 
                 case System.Data.SqlDbType.Int:
-                    return string.Format($"[{sqlField.Name}] [int] NULL");
+                    return string.Format($"[{sqlField.Name.Replace("'", "''")}] [int] NULL");
 
                 case System.Data.SqlDbType.VarChar:
                     if (sqlField.Name.ToLower().Contains("com") ||
@@ -129,12 +140,12 @@ namespace CsvToSql.SqlWriter
                           )
                     {
                         sqlField.Length = 512;
-                        return string.Format($"[{sqlField.Name}] [nvarchar]({sqlField.Length}) NULL");
+                        return string.Format($"[{sqlField.Name.Replace("'", "''")}] [nvarchar]({sqlField.Length}) NULL");
                     }
                     if (sqlField.Name.ToLower().Contains("path") )
                     {
                         sqlField.Length = 256;
-                        return string.Format($"[{sqlField.Name}] [nvarchar]({sqlField.Length}) NULL");
+                        return string.Format($"[{sqlField.Name.Replace("'", "''")}] [nvarchar]({sqlField.Length}) NULL");
                     }
                     if (sqlField.Name.ToLower().Contains("code") ||
                         sqlField.Name.ToLower().Contains("date") ||
@@ -146,10 +157,10 @@ namespace CsvToSql.SqlWriter
                         )
                     {
                         sqlField.Length = 32;
-                        return string.Format($"[{sqlField.Name}] [nvarchar]({sqlField.Length}) NULL");
+                        return string.Format($"[{sqlField.Name.Replace("'", "''")}] [nvarchar]({sqlField.Length}) NULL");
                     }
                     sqlField.Length = 128;
-                    return string.Format($"[{sqlField.Name}] [nvarchar]({sqlField.Length}) NULL");
+                    return string.Format($"[{sqlField.Name.Replace("'", "''")}] [nvarchar]({sqlField.Length}) NULL");
 
                 default:
                     throw new Exception($"Unknown sqlField.SqlType {sqlField.SqlType}.");
@@ -160,7 +171,7 @@ namespace CsvToSql.SqlWriter
         internal string GetTruncateTableStatement()
         {
             return ImportTask.truncate ?
-                string.Format($"TRUNCATE TABLE [{ImportTask.table}];") :
+                string.Format($"TRUNCATE TABLE [{ImportTask.table.Replace("'", "''")}];") :
                 ";";
         }
 
@@ -202,7 +213,7 @@ namespace CsvToSql.SqlWriter
         private string GetInsertIntoPart(List<SqlField> headers)
         {
             var fNames = headers.Select(o => string.Format($"[{o.Name}]"));
-            return string.Format($"INSERT INTO [{ImportTask.table}] ({string.Join(", ", fNames)}) VALUES ");
+            return string.Format($"INSERT INTO [{ImportTask.table.Replace("'", "''")}] ({string.Join(", ", fNames)}) VALUES ");
         }
 
     }

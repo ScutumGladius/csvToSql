@@ -2,17 +2,19 @@
 
 ## Import mittels `Import-Excel.ps1`
 
-`Import-Excel.ps1` ist ein Powershell-Skript, welches CSV- oder Excel-Dateien importiert. Soll die Zieldatenbank  angepasst werden, muss dies momentan noch am Anfang des Codes geändert werden (`$sqlServer`)
+`CsvToSql.exe` ist ein c#-based Programm, welches CSV- oder Excel-Dateien importiert. Soll die Zieldatenbank  angepasst werden, muss dies momentan noch am Anfang des Codes geändert werden (`$sqlServer`)
 
 ## Voraussetzung
 
-* Als Administrator in einer Powershell ausführen: "Install-Module -name SqlServer" - gegebenenfalls den NuGet-Provider aktualisieren lassen.
+* Net.Core 3 Framework
 
 ### Programmparameter
 
+CsvToSql.exe --settings ../../../settings/settings.json --truncate 
+
 * `settings`: Pfad zur verwendeten Settings-Datei, default ist _settings.json_
-* `database`: Datenbank in die importiert werden soll, default ist _DataCollection_
-* `noID`: Gibt an, dass die Tabelle, in die importiert wird, keine ID-Spalte mit einem GUID-Defaultwert hat. [Historisch gewachsen, sollte besser auf das gegenteiliges Verhalten umgestellt werden]
+* -`database`: Datenbank in die importiert werden soll, default ist _DataCollection_
+* -`noID`: Gibt an, dass die Tabelle, in die importiert wird, keine ID-Spalte mit einem GUID-Defaultwert hat. [Historisch gewachsen, sollte besser auf das gegenteiliges Verhalten umgestellt werden]
 * `truncate`: Sollen die Inhalte der Tabelle vor dem Import komplett gelöscht werden. Beinhaltet die Zieltabelle die Spalte _DCImportDate_, muss dieser Switch angegeben werden
 * `importDate`: Falls das _DCImportDate_ auf einen gewünschten Wert gesetzt werden soll
 
@@ -37,6 +39,7 @@ Die Settings-Datei besteht aus einer Liste zu importierender Dateien im Schlüss
             "truncate": true,
             "quoting" : "",
             "saveMode": false,
+            "comment": "Lorem Ipsum",
             "columnMapping": [
                 {
                     "SAL code": "SAL",
@@ -79,6 +82,7 @@ Die Settings-Datei besteht aus einer Liste zu importierender Dateien im Schlüss
 
 #### Allgemeine Einstellungen
 
+* connectionString: ConnectionString zum SQL-Server
 * file: Absoluter oder relativer Pfad der zu importierenden Datei
 * table: In welche Tabelle importiert werden soll
 * macFix: [optional] Gibt den Spaltenamen aus Excel/CSV an, in der sich eine Mac-Adresse befindet. Wird dieser angegeben, so werden alle gelesenen Mac-Adressen auf das Format XX-XX-XX-XX-XX-XX normiert
@@ -89,6 +93,7 @@ Die Settings-Datei besteht aus einer Liste zu importierender Dateien im Schlüss
 * batchSize: Die Anzahl der Insert-Befehlen in einer SQL-Abfrage. (default - 1000)
 * saveMode: Prevent error "String or binary data would be truncated." Adjust the length of the Data to the field size. (default - false)
 * forceCreateTable: Die alte SQL-Tabelle wird gelöscht und die Neue angelegt. (default - false)
+* comment: [optional] Kommentar für Table "TABLESTATUS".  
 
 ##### Excel
 
@@ -143,7 +148,7 @@ Das Skript liest die Dateinamen aller bereits importierten Dateien aus der Daten
 
 ## Import mittels `Get-PPMDChangeOwner.ps1`
 
-Bei OMS-Geräten kann es vorkommen, dass das zugehörige PPMD einen Owner in der falschen Company hat. Um diese Owner zu ändern gibt es ein von ATOS angebotenen Prozess, bei dem ein Excel mit _ciuuid_ der zu ändernden Geräte und _gid_ der neuen Owner bereitzustellen ist. Um dieses Excel zu erzeugen, werden aus der Datenbank die entsprechenden Geräte ausgelesen, in ein Excel geschrieben und den Verantwortlichen bei Siemens und Siemens Energy (C. Tirico, A. Aschenbrenner, J. Greiner, M. Kleinemeier) zur Freigabe vorgelegt.
+Bei OMS-Geräten kann es vorkommen, dass das zugehörige PPMD einen Owner in der falschen Company hat. Um diese Owner zu ändern gibt es ein von **** angebotenen Prozess, bei dem ein Excel mit _ciuuid_ der zu ändernden Geräte und _gid_ der neuen Owner bereitzustellen ist. Um dieses Excel zu erzeugen, werden aus der Datenbank die entsprechenden Geräte ausgelesen, in ein Excel geschrieben und den Verantwortlichen bei Siemens und Siemens Energy (C. Tirico, A. Aschenbrenner, J. Greiner, M. Kleinemeier) zur Freigabe vorgelegt.
 
 Dafür werde in der Datenbank die Views `vOmsPpmdSag2Se`, `vOmsPpmdSe2Sag` und `vPpmdOwnerChangeMinMaxDate`sowie die Tabelle `PPMDOWNERCHANGE` verwendet.
 
@@ -153,6 +158,6 @@ Unser Prozess um diese Listen in der Datenbank nachverfolgen zu können sieht fo
 
 * Sobald diese Excels im Verzeichnis liegen, kann `Get-PPMDChangeOwner.ps` ausgeführt werden
 
-* Wenn alle Geräte die Freigabe erhalten haben, wird eine neue Excel-Datei mit dem Namenssuffix `-clean` (`ChangePersonOnDeviceUUID-SAG-21cw03a-clean.xlsx`) erstellt und an ATOS (`netproteampl@atos.net`, `joachim.reichert@atos.net`) geschickt, die neue Datei kann bereits in das changeowner-Verzeichnis gelegt werden, sollte aber in der Dateiendung umbenannt werden (also etwa von `.xlsx` nach `.xls_`), damit sie beim der Ausführung des Skripts noch nicht berüksichtigt wird.
+* Wenn alle Geräte die Freigabe erhalten haben, wird eine neue Excel-Datei mit dem Namenssuffix `-clean` (`ChangePersonOnDeviceUUID-SAG-21cw03a-clean.xlsx`) erstellt und an ******  geschickt, die neue Datei kann bereits in das changeowner-Verzeichnis gelegt werden, sollte aber in der Dateiendung umbenannt werden (also etwa von `.xlsx` nach `.xls_`), damit sie beim der Ausführung des Skripts noch nicht berüksichtigt wird.
 
-* Sobald ATOS Vollzug meldet, kann die Datei wieder richtig benannt werden (`.xlsx`) und das Skript erneut ausgeführt werden.
+* Sobald **** Vollzug meldet, kann die Datei wieder richtig benannt werden (`.xlsx`) und das Skript erneut ausgeführt werden.

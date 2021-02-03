@@ -53,6 +53,7 @@ namespace CsvToSql.Configuration
                 importFileOptions.truncate = GetTokenAsBoolean(l, importFile, "truncate", false);
                 importFileOptions.saveMode = GetTokenAsBoolean(l, importFile, "saveMode", false);
                 importFileOptions.forceCreateTable = GetTokenAsBoolean(l, importFile, "forceCreateTable", false);
+                importFileOptions.comment = GetTokenAsString(l, importFile, "comment", "");
 
                 importFiles.Add(importFileOptions);
             }

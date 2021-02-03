@@ -72,6 +72,10 @@ namespace CsvToSqlTest
                 Log.Debug($"SqlServerWriter: init for '{ImportTask.file}'");
             }
 
+            public void UpdateStatusTable(int rowCounter, TimeSpan timeSpan)
+            {
+                Log.Debug($"SqlServerWriter: UpdateStatusTable rowCounter='{rowCounter}'");
+            }
 
             public int Write(List<List<string>> linesToWrite)
             {

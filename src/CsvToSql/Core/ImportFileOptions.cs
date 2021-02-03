@@ -24,6 +24,7 @@ namespace CsvToSql.Core
         public DateTime ImportDateTime { get; set; } // from args
         public bool saveMode { get; set; } // prevent "String or binary data would be truncated." Adjust the length of the Data to the field size 
         public bool forceCreateTable { get; set; } // Remove old and create new SQL-Table
+        public string comment { get; set; }
 
 
         public Dictionary<string, string> columnMapping { get; set; }
