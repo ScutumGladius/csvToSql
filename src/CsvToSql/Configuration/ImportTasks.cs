@@ -14,13 +14,23 @@ namespace CsvToSql.Configuration
     {
         public static IList<ImportFileOptions> ReadFromJsonFile(Logging l, ArgcOptions argv)
         {
-            var fileContent = File.ReadAllText(argv.JsonCfgFile);
-            //importTasks = (List<ImportFileOptions>)importTasks.ToObject<IList<ImportFileOptions>>(); ' Boom :(
-            List<ImportFileOptions> importTasks = (List<ImportFileOptions>)ReadTasks(l, fileContent);
+            try
+            {
+                var fileContent = File.ReadAllText(argv.JsonCfgFile);
 
-            // Truncate from commandLine have a priority
-            importTasks.ForEach(it => { it.truncate = argv.Truncate; it.ImportDateTime = argv.ImportDateTime; });
-            return importTasks;
+                //importTasks = (List<ImportFileOptions>)importTasks.ToObject<IList<ImportFileOptions>>(); ' Boom :(
+                List<ImportFileOptions> importTasks = (List<ImportFileOptions>)ReadTasks(l, fileContent);
+
+                // Truncate from commandLine have a priority
+                importTasks.ForEach(it => { it.truncate = argv.Truncate; it.ImportDateTime = argv.ImportDateTime; });
+                return importTasks;
+
+            }
+            catch (Exception ex)
+            {
+                l.Error($"ReadFromJsonFile: Error. Exception : {ex.Message}.");
+                return new List<ImportFileOptions>();
+            }
         }
 
         public static IList<ImportFileOptions> ReadTasks(Logging l, string fileContent)

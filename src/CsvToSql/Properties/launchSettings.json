@@ -1,8 +1,7 @@
 {
   "profiles": {
     "CsvToSql": {
-      "commandName": "Project",
-      "commandLineArgs": "--settings ../../../settings/settings.json --truncate "
+      "commandName": "Project"
     }
   }
 }

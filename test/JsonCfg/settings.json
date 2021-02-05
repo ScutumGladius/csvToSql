@@ -2,7 +2,7 @@
 "importFiles": 
 	[
         {
-            "connectionString": "Server=localhost;Database=EUC;User Id=SDMC_User;Password=SDMC_User;MultipleActiveResultSets=true;",
+            "connectionString": "Server=localhost;Database=EUC;User Id=Samlple_User;Password=Sample_User;MultipleActiveResultSets=true;",
             "file": "../CMDB _OMS_July_2020.xlsx",
             "sheet": "Ovierview",
             "csv": false,
