@@ -1,0 +1,11 @@
+{
+"importFiles": 
+	[
+		{
+            "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
+            "file": "d:/TNT/seuser_Disqualification_2021-01-25.csv",
+            "table": "SeuserDisqualification",
+			"truncate": true
+        }
+    ]
+}

@@ -130,6 +130,13 @@ namespace CsvToSql.SqlWriter
                     return string.Format($"[{sqlField.Name.Replace("'", "''")}] [int] NULL");
 
                 case System.Data.SqlDbType.VarChar:
+
+                    if (sqlField.Name.Contains("Domain"))
+                    {
+                        sqlField.Length = 64;
+                        return string.Format($"[{sqlField.Name.Replace("'", "''")}] [nvarchar]({sqlField.Length}) NULL");
+                    }
+
                     if (sqlField.Name.ToLower().Contains("com") ||
                           sqlField.Name.ToLower().Contains("review") ||
                           sqlField.Name.ToLower().Contains("hist") ||
@@ -142,11 +149,13 @@ namespace CsvToSql.SqlWriter
                         sqlField.Length = 512;
                         return string.Format($"[{sqlField.Name.Replace("'", "''")}] [nvarchar]({sqlField.Length}) NULL");
                     }
+
                     if (sqlField.Name.ToLower().Contains("path") )
                     {
                         sqlField.Length = 256;
                         return string.Format($"[{sqlField.Name.Replace("'", "''")}] [nvarchar]({sqlField.Length}) NULL");
                     }
+
                     if (sqlField.Name.ToLower().Contains("code") ||
                         sqlField.Name.ToLower().Contains("date") ||
                         sqlField.Name.ToLower().Contains("pmo") ||
@@ -159,6 +168,7 @@ namespace CsvToSql.SqlWriter
                         sqlField.Length = 32;
                         return string.Format($"[{sqlField.Name.Replace("'", "''")}] [nvarchar]({sqlField.Length}) NULL");
                     }
+                    // Default:
                     sqlField.Length = 128;
                     return string.Format($"[{sqlField.Name.Replace("'", "''")}] [nvarchar]({sqlField.Length}) NULL");
 

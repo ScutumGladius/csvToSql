@@ -1,7 +1,8 @@
 {
   "profiles": {
     "CsvToSql": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "--settings ../../../settings/settings.json"
     }
   }
 }
