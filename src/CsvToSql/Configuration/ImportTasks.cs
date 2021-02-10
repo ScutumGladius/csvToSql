@@ -21,8 +21,9 @@ namespace CsvToSql.Configuration
                 //importTasks = (List<ImportFileOptions>)importTasks.ToObject<IList<ImportFileOptions>>(); ' Boom :(
                 List<ImportFileOptions> importTasks = (List<ImportFileOptions>)ReadTasks(l, fileContent);
 
-                // Truncate from commandLine have a priority
-                importTasks.ForEach(it => { it.truncate = argv.Truncate; it.ImportDateTime = argv.ImportDateTime; });
+                // Truncate from commandLine have a priority, and set ImportDateTime
+                importTasks.ForEach(it => { if (argv.Truncate) it.truncate = argv.Truncate; it.ImportDateTime = argv.ImportDateTime; });
+
                 return importTasks;
 
             }

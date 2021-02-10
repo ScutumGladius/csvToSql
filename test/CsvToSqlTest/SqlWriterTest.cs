@@ -151,6 +151,7 @@ namespace CsvToSqlTest
             // Assert
             Assert.IsTrue(sqlWriter != null);
             Assert.IsTrue(tableTruncSql.Length < 3);
+            Assert.IsFalse(tableTruncSql.Contains("TRUNCATE TABLE"));
         }
 
         [Test]
