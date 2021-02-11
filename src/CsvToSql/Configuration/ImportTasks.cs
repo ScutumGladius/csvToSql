@@ -66,6 +66,9 @@ namespace CsvToSql.Configuration
                 importFileOptions.forceCreateTable = GetTokenAsBoolean(l, importFile, "forceCreateTable", false);
                 importFileOptions.comment = GetTokenAsString(l, importFile, "comment", "");
 
+                importFileOptions.retryPolicyNumRetries = Math.Abs(GetTokenAsInt(l, importFile, "retryPolicyNumRetries", 3));
+                importFileOptions.retryPolicyDelayRetries = Math.Abs(GetTokenAsInt(l, importFile, "retryPolicyDelayRetries", 1000)); // Miliseconds
+
                 importFiles.Add(importFileOptions);
             }
             return importFiles;

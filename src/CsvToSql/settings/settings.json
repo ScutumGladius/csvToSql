@@ -16,7 +16,7 @@
         },
 		{
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/TNT/seuser_Disqualification_2021-01-25.csv",
+            "file": "d:/_TNT/seuser_Disqualification_2021-01-25.csv",
             "table": "SeuserDisqualification",
 			"truncate": true,
 			"columnMapping": [
@@ -27,7 +27,7 @@
         },
         {
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/TNT/20210118110419_20210118_Clients_SE.csv",
+            "file": "d:/_TNT/20210118110419_20210118_Clients_SE.csv",
             "table": "ADPL",
 			"truncate": true,
 			"columnMapping": [
@@ -38,7 +38,7 @@
         },
         {
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/TNT/u_cmdb_ci_dwp_prov.csv",
+            "file": "d:/_TNT/u_cmdb_ci_dwp_prov.csv",
             "table": "CMDB",
 			"truncate": true,
 			"columnMapping": [
@@ -49,7 +49,18 @@
         },
         {
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/TNT/v_xEnergy_clients_v03_MS_sync-2021-01-17.csv",
+            "file": "d:/_TNT/u_cmdb_ci_dwp_prov.1.csv",
+            "table": "CMDB",
+			"truncate": true,
+			"columnMapping": [
+                {
+					"##ImportDate" : "DCImportDate"
+                }
+            ]
+        },
+        {
+            "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
+            "file": "d:/_TNT/v_xEnergy_clients_v03_MS_sync-2021-01-17.csv",
             "table": "EnergyClients",
 			"forceCreateTable": true,
 			"truncate": true,

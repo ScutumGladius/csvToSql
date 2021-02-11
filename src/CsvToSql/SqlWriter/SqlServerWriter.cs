@@ -65,7 +65,9 @@ namespace CsvToSql.SqlWriter
             Log.Debug($"SqlServerWriter: Write; Count='{linesToWrite.Count}'");
 
             // insert
-            sqlServerService.simpleExecQuery(GetInsertStatements(linesToWrite));
+            var insertStatement = GetInsertStatements(linesToWrite);
+
+            sqlServerService.simpleExecQuery(insertStatement, ImportTask.retryPolicyNumRetries, ImportTask.retryPolicyDelayRetries);
 
             return 0;
         }
@@ -96,7 +98,7 @@ namespace CsvToSql.SqlWriter
 
         public void UpdateStatusTable(int rowCounter, TimeSpan timeSpan)
         {
-            sqlServerService.simpleExecQuery(sqlCmdBuilder.GetUpdateTatusStatement(rowCounter, timeSpan));
+            sqlServerService.simpleExecQuery(sqlCmdBuilder.GetUpdateTatusStatement(rowCounter, timeSpan), ImportTask.retryPolicyNumRetries, ImportTask.retryPolicyDelayRetries);
         }
     }
 }

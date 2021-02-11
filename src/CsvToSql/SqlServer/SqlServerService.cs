@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
 
 namespace CsvToSql.SqlServer
 {
@@ -48,6 +49,26 @@ namespace CsvToSql.SqlServer
                 _logger.Trace($"SqlServerService : execute query {query}.");
             else
                 _logger.Trace($"SqlServerService : execute query {query.Substring(0, 60)} ...");
+        }
+
+        internal void simpleExecQuery(string insertStatement, int retryPolicyNumRetries, int retryPolicyDelayRetries)
+        {
+            for (int i = 0; i < retryPolicyNumRetries; i++)
+            {
+                try
+                {
+                    simpleExecQuery(insertStatement);
+                }
+                catch (Exception)
+                {
+                    _logger.Error($"Try execute failed for {i + 1}-th time. ");
+                    Thread.Sleep(retryPolicyDelayRetries);
+                    if (i >= retryPolicyNumRetries - 1)
+                        throw;
+                }
+            }
+
+
         }
     }
 }

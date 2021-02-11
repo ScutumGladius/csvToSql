@@ -82,9 +82,8 @@ namespace CsvToSql.SqlWriter
 
         internal string GetUpdateTatusStatement(int rowCounter, TimeSpan timeSpan)
         {
-            //var comment = string.Format($"File \"{ImportTask.file}\" is imported by \"{(Environment.UserDomainName + "\\" + Environment.UserName)}\". {rowCounter} rows inserted. It takes {timeSpan.TotalMilliseconds / 1000.0} Seconds or {timeSpan.Minutes}:{timeSpan.Seconds} Minutes.");
             var comment = string.IsNullOrWhiteSpace(ImportTask.comment) ?
-                string.Format($"File \"{ImportTask.file}\" imported. {rowCounter} rows inserted. It took {timeSpan.TotalMilliseconds / 1000.0} Seconds or {timeSpan.Minutes}:{timeSpan.Seconds} Minutes.") :
+                string.Format($"File \"{ImportTask.file}\" imported. {rowCounter} rows inserted from \"{(Environment.UserDomainName + "\\" + Environment.MachineName)}\" It took {timeSpan.TotalMilliseconds / 1000.0} Seconds or {timeSpan.Minutes}:{timeSpan.Seconds} Minutes.") :
                 ImportTask.comment;
 
             return string.Format($"IF OBJECT_ID('TABLESTATUS', 'U') IS NOT NULL\n\tINSERT INTO [TABLESTATUS] ([Tablename],[Comment],[Imported]) VALUES('{ImportTask.table.Replace("'", "''")}', '{comment.Replace("'", "''")}', GETDATE());");

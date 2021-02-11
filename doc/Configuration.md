@@ -40,6 +40,8 @@ Die Settings-Datei besteht aus einer Liste zu importierender Dateien im Schlüss
             "quoting" : "",
             "saveMode": false,
             "comment": "Lorem Ipsum",
+            "retryPolicyNumRetries": 5,
+            "retryPolicyDelayRetries": 5000,
             "columnMapping": [
                 {
                     "SAL code": "SAL",
@@ -94,6 +96,8 @@ Die Settings-Datei besteht aus einer Liste zu importierender Dateien im Schlüss
 * saveMode: Prevent error "String or binary data would be truncated." Adjust the length of the Data to the field size. (default - false)
 * forceCreateTable: Die alte SQL-Tabelle wird gelöscht und die Neue angelegt. (default - false)
 * comment: [optional] Kommentar für Table "TABLESTATUS".  
+* retryPolicyNumRetries: Wie oft wird es versucht die erzeugte SQL-Query auszuführen.(default - 3)
+* retryPolicyDelayRetries: Zeitspanne zwischen den Fehlversuchen in Millisekunden (default - 1000)
 
 ##### Excel
 
