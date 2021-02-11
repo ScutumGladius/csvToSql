@@ -58,6 +58,7 @@ namespace CsvToSql.SqlServer
                 try
                 {
                     simpleExecQuery(insertStatement);
+                    return;
                 }
                 catch (Exception)
                 {

@@ -3,7 +3,7 @@
 	[
         {
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/TNT/survey_lml_pmo.csv",
+            "file": "d:/_TNT/survey_lml_pmo.csv",
             "table": "SurveyLmlPmo",
 			"truncate": true,
 			"batchSize": 1000,
@@ -38,9 +38,10 @@
         },
         {
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/_TNT/u_cmdb_ci_dwp_prov.csv",
+            "file": "d:/TNT/u_cmdb_ci_dwp_prov.csv",
             "table": "CMDB",
-			"truncate": true,
+			"truncate": false,
+			"batchSize": 1000,
 			"columnMapping": [
                 {
 					"##ImportDate" : "DCImportDate"
@@ -49,9 +50,9 @@
         },
         {
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/_TNT/u_cmdb_ci_dwp_prov.1.csv",
-            "table": "CMDB",
-			"truncate": true,
+            "file": "d:/TNT/u_cmdb_ci_dwp_prov.1.csv",
+            "table": "FITSATOS",
+			"truncate": false,
 			"columnMapping": [
                 {
 					"##ImportDate" : "DCImportDate"
