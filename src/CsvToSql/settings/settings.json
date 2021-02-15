@@ -38,7 +38,7 @@
         },
         {
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/TNT/u_cmdb_ci_dwp_prov.csv",
+            "file": "d:/_TNT/u_cmdb_ci_dwp_prov.csv",
             "table": "CMDB",
 			"truncate": false,
 			"batchSize": 1000,
@@ -50,7 +50,7 @@
         },
         {
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/TNT/u_cmdb_ci_dwp_prov.1.csv",
+            "file": "d:/_TNT/u_cmdb_ci_dwp_prov.1.csv",
             "table": "FITSATOS",
 			"truncate": false,
 			"columnMapping": [
@@ -71,6 +71,30 @@
                 {
                     "KEY": "VALUE",
                     "SAL code": "SAL",
+					"##ImportDate" : "DCImportDate"
+                }
+            ]
+        },
+        {
+            "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
+            "file": "d:/TNT/seuser_Finished_2021-02-05_16.csv",
+            "table": "SeuserFinished",
+			"truncate": false,
+			"delimiter": ";",
+			"columnMapping": [
+                {
+					"##ImportDate" : "DCImportDate"
+                }
+            ]
+        },
+        {
+            "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
+            "file": "d:/TNT/seuser_Scheduling_2021-01-26.csv",
+            "table": "SeuserScheduling",
+			"truncate": false,
+			"delimiter": ";",
+			"columnMapping": [
+                {
 					"##ImportDate" : "DCImportDate"
                 }
             ]

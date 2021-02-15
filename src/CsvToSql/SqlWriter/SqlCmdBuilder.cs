@@ -130,7 +130,11 @@ namespace CsvToSql.SqlWriter
 
                 case System.Data.SqlDbType.VarChar:
 
-                    if (sqlField.Name.Contains("Domain"))
+                    if (sqlField.Name.Contains("Domain") ||
+                        sqlField.Name.Contains("SID") ||
+                        sqlField.Name.Contains("GID") ||
+                        sqlField.Name.Contains("Guid")
+                        )
                     {
                         sqlField.Length = 64;
                         return string.Format($"[{sqlField.Name.Replace("'", "''")}] [nvarchar]({sqlField.Length}) NULL");
