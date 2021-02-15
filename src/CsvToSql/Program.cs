@@ -19,6 +19,7 @@ namespace CsvToSql
             IConfiguration appSettings = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json").Build();
+            
             var defaultConnectionString = appSettings.GetSection("ConnectionStrings").GetChildren().First().Value;
 
             var log = new Logging();

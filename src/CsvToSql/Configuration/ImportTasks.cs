@@ -29,7 +29,7 @@ namespace CsvToSql.Configuration
             }
             catch (Exception ex)
             {
-                l.Error($"ReadFromJsonFile: Error. Exception : {ex.Message}.");
+                l.Error($"ReadFromJsonFile: Error. Exception : {ex.Message}.\n\nDocumentation in ..\\..\\..\\doc\\Configuration.md\n\nUsage: CsvToSql.exe --settings mySettings.json");
                 return new List<ImportFileOptions>();
             }
         }
