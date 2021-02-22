@@ -101,7 +101,8 @@ namespace CsvToSqlTest
                     {
                         ""file"": ""..\\..\\..\\..\\TestCsv\\simpleComma.csv"",
                         ""batchSize"": 4,
-                        ""truncate"": true
+                        ""truncate"": true,
+                        ""uniqueOnly"":true
                     }
                 ]
             }";
@@ -473,6 +474,65 @@ namespace CsvToSqlTest
             Assert.IsTrue(insertSql.Contains("simpleComma.csv"));
             Assert.IsTrue(insertSql.Contains("20200911132530_20200907_Clients_SE.csv"));
             Assert.IsTrue(insertSql.Contains("CONVERT(DATETIME"));
+        }
+
+        [Test]
+        public void SqlWriterTest_GetInsertStatmentsWithUniqueOnly()
+        {
+
+            // Arrange
+            var jsonSettings = @"
+            {
+            ""importFiles"": 
+                [
+                    {
+                        ""file"": ""..\\..\\..\\..\\TestCsv\\simpleComma.csv"",
+                        ""batchSize"": 4,
+                        ""saveMode"": false,
+                        ""uniqueOnly"": true,
+                          ""columnMapping"": [
+                            {
+                                ""head1"": ""NewHeadOne"",
+                                ""head2"": ""NewHeadTwo"",
+                                ""##ImportDate"": ""DCImportDate""
+                            }
+                        ]
+                    }
+                ]
+            }";
+
+            var importTasks = (List<ImportFileOptions>)CsvToSql.Configuration.ImportTasks.ReadTasks(log, jsonSettings);
+
+            var sqlWriter = new SqlServerWriter(log, "");
+            var sqlWriter2 = new SqlServerWriter(log, "");
+
+            var headers = new List<string>() { "head1", "head2", "head3" };
+            var linesToWrite = new List<List<string>>() {
+                new List<string>(){ "a0", "a1", "a2"},
+                new List<string>(){ "b0", "b1", "b2"}
+            };
+
+            var linesToWrite2 = new List<List<string>>() {
+                new List<string>(){ "a0", "a1", "a2"},
+                new List<string>(){ "b0", "b1", "b2"},
+                new List<string>(){ "b0", "b1", "b2"},
+                new List<string>(){ "b0", "b1", "b2"}
+            };
+
+            sqlWriter.Init(importTasks.First(), headers);
+            sqlWriter2.Init(importTasks.First(), headers);
+
+            // Act
+
+            string insertSql = sqlWriter.GetInsertStatements(linesToWrite);
+            string insertSqlNotUniq = sqlWriter2.GetInsertStatements(linesToWrite2);
+
+            // Assert
+            Assert.IsTrue(sqlWriter != null);
+            Assert.AreEqual(sqlWriter.GetHeaderFields().Count, 4); // { "head1", "head2", "head3", "DCImportDate"}
+            Assert.IsTrue(insertSql.Contains("INSERT INTO"));
+            Assert.IsTrue(insertSql.Contains("CONVERT(DATETIME"));
+            Assert.AreEqual(insertSql, insertSqlNotUniq);
         }
     }
 }

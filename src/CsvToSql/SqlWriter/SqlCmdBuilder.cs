@@ -14,11 +14,13 @@ namespace CsvToSql.SqlWriter
         private ImportFileOptions ImportTask;
         private string ImportDateTimeString;
         private string ImportExactFileName;
+        private Dictionary<int, bool> uniqueRows;
 
 
         public SqlCmdBuilder(ImportFileOptions importTask)
         {
             ImportTask = importTask;
+            uniqueRows = new Dictionary<int, bool>();
         }
 
         internal List<SqlField> GetHeaderFields(List<string> headers)
@@ -80,10 +82,10 @@ namespace CsvToSql.SqlWriter
                 "";
         }
 
-        internal string GetUpdateTatusStatement(int rowCounter, TimeSpan timeSpan)
+        internal string GetUpdateTatusStatement(int rowCounter, TimeSpan timeSpan, long fileLenght)
         {
             var comment = string.IsNullOrWhiteSpace(ImportTask.comment) ?
-                string.Format($"File \"{ImportTask.file}\" imported. {rowCounter} rows inserted from \"{(Environment.UserDomainName + "\\" + Environment.MachineName)}\" It took {timeSpan.TotalMilliseconds / 1000.0} Seconds or {timeSpan.Minutes}:{timeSpan.Seconds} Minutes.") :
+                string.Format($"File \"{ImportTask.file}\" with lenght:'{fileLenght}' imported. {rowCounter} rows inserted from \"{(Environment.UserDomainName + "\\" + Environment.MachineName)}\" It took {timeSpan.TotalMilliseconds / 1000.0} Seconds or {timeSpan.ToString(@"hh\:mm\:ss")} of time.") :
                 ImportTask.comment;
 
             return string.Format($"IF OBJECT_ID('TABLESTATUS', 'U') IS NOT NULL\n\tINSERT INTO [TABLESTATUS] ([Tablename],[Comment],[Imported]) VALUES('{ImportTask.table.Replace("'", "''")}', '{comment.Replace("'", "''")}', GETDATE());");
@@ -192,8 +194,8 @@ namespace CsvToSql.SqlWriter
         {
             if (linesToWrite.Count <= 0) return "";
             string insertIntoPart = GetInsertIntoPart(headers);
-            string values = string.Join(",", linesToWrite.Select(r => BuildInsertStatmentForValues(headers, r)));
-            return insertIntoPart + values + ";";
+            string values = string.Join(",", linesToWrite.Select(r => BuildInsertStatmentForValues(headers, r)).Where(r => !string.IsNullOrEmpty(r)));
+            return values.Length > 0 ? insertIntoPart + values + ";" : "";
         }
 
         private string BuildInsertStatmentForValues(List<SqlField> headers, List<string> rowToWrite)
@@ -220,7 +222,20 @@ namespace CsvToSql.SqlWriter
                         break;
                 }
             }
-            return string.Format($"({string.Join(", ", acc )})");
+            
+            var rowInsertValues= string.Format($"({string.Join(", ", acc )})");
+            return GetUniqueOnlyRow(rowInsertValues);
+        }
+
+        private string GetUniqueOnlyRow(string rowInsertValues)
+        {
+            string uniqRow = "";
+            if (!ImportTask.uniqueOnly) return rowInsertValues;
+            if (!uniqueRows.ContainsKey(rowInsertValues.GetHashCode())) { 
+                uniqueRows.Add(rowInsertValues.GetHashCode(), true);
+                uniqRow = rowInsertValues;
+            }
+            return uniqRow;
         }
 
         private string GetInsertIntoPart(List<SqlField> headers)

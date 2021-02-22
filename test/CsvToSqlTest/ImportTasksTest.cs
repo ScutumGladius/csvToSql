@@ -42,6 +42,7 @@ namespace CsvToSqlTest
                     {
                         ""file"": ""2020.xlsx"",
                         ""batchSize"": 500,
+                        ""uniqueOnly"": true,
                         ""columnMapping"": [
                             {
                                 ""SAL code"": ""SAL"",
@@ -50,6 +51,15 @@ namespace CsvToSqlTest
                             }
                         ]
                     
+                    },
+                    {
+                        ""file"": ""2020.xlsx"",
+                        ""batchSize"": 500,
+                        ""uniqueOnly"": false
+                    },
+                    {
+                        ""file"": ""2020.xlsx"",
+                        ""batchSize"": 500
                     }
                 ]
             }";
@@ -58,9 +68,12 @@ namespace CsvToSqlTest
             var importTasks = CsvToSql.Configuration.ImportTasks.ReadTasks(log, jsonSettings);
 
             // Assert
-            Assert.AreEqual(importTasks.Count, 1);
+            Assert.AreEqual(importTasks.Count, 3);
             Assert.AreEqual(importTasks[0].columnMapping.Count, 3);
             Assert.AreEqual(importTasks[0].batchSize, 500);
+            Assert.AreEqual(importTasks[0].uniqueOnly, true);
+            Assert.AreEqual(importTasks[1].uniqueOnly, false);
+            Assert.AreEqual(importTasks[2].uniqueOnly, false);
         }
 
     }

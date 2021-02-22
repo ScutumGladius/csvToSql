@@ -69,6 +69,8 @@ namespace CsvToSql.Configuration
                 importFileOptions.retryPolicyNumRetries = Math.Abs(GetTokenAsInt(l, importFile, "retryPolicyNumRetries", 3));
                 importFileOptions.retryPolicyDelayRetries = Math.Abs(GetTokenAsInt(l, importFile, "retryPolicyDelayRetries", 1000)); // Miliseconds
 
+                importFileOptions.uniqueOnly = GetTokenAsBoolean(l, importFile, "uniqueOnly", false);
+
                 importFiles.Add(importFileOptions);
             }
             return importFiles;

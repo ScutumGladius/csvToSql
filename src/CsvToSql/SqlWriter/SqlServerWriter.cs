@@ -26,7 +26,7 @@ namespace CsvToSql.SqlWriter
         private SqlCmdBuilder sqlCmdBuilder;
         private SqlServerService sqlServerService;
         private readonly string defaultConnectionString;
-
+ 
         public SqlServerWriter(Logging log, string defaultConnectionString)
         {
             Log = log;
@@ -37,7 +37,9 @@ namespace CsvToSql.SqlWriter
             ImportTask = importTask;
             Headers = headers;
             Log.Debug($"SqlServerWriter: init for '{ImportTask.file}'");
+
             sqlCmdBuilder = new SqlCmdBuilder(importTask);
+
             HeaderFields = sqlCmdBuilder.GetHeaderFields(Headers);
 
             sqlServerService = new SqlServerService(Log, getSqlConnectionString());
@@ -96,9 +98,9 @@ namespace CsvToSql.SqlWriter
             return sqlCmdBuilder.GetInsertStatements(HeaderFields, linesToWrite);
         }
 
-        public void UpdateStatusTable(int rowCounter, TimeSpan timeSpan)
+        public void UpdateStatusTable(int rowCounter, TimeSpan timeSpan, long fileLenght)
         {
-            sqlServerService.simpleExecQuery(sqlCmdBuilder.GetUpdateTatusStatement(rowCounter, timeSpan), ImportTask.retryPolicyNumRetries, ImportTask.retryPolicyDelayRetries);
+            sqlServerService.simpleExecQuery(sqlCmdBuilder.GetUpdateTatusStatement(rowCounter, timeSpan, fileLenght), ImportTask.retryPolicyNumRetries, ImportTask.retryPolicyDelayRetries);
         }
     }
 }

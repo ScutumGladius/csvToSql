@@ -42,6 +42,7 @@ Die Settings-Datei besteht aus einer Liste zu importierender Dateien im Schlüss
             "comment": "Lorem Ipsum",
             "retryPolicyNumRetries": 5,
             "retryPolicyDelayRetries": 5000,
+            "uniqueOnly": false,
             "columnMapping": [
                 {
                     "SAL code": "SAL",
@@ -98,6 +99,7 @@ Die Settings-Datei besteht aus einer Liste zu importierender Dateien im Schlüss
 * comment: [optional] Kommentar für Table "TABLESTATUS".  
 * retryPolicyNumRetries: Wie oft wird es versucht die erzeugte SQL-Query auszuführen.(default - 3)
 * retryPolicyDelayRetries: Zeitspanne zwischen den Fehlversuchen in Millisekunden (default - 1000)
+* uniqueOnly: Nur die unique Zeile werden importiert.(default - false)
 
 ##### Excel
 

@@ -27,6 +27,7 @@ namespace CsvToSql.Core
         public string comment { get; set; }
         public int retryPolicyNumRetries { get; set; }
         public int retryPolicyDelayRetries { get; set; }
+        public bool uniqueOnly { get; set; } 
 
 
         public Dictionary<string, string> columnMapping { get; set; }
