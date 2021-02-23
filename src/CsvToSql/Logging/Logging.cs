@@ -12,11 +12,17 @@ namespace CsvToSql.logging
         }
         public void Trace(string toLog)
         {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine("Trace:" + toLog);
+            Console.ResetColor();
         }
         public void Error(string toLog)
         {
+
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("Error:" + toLog);
+            Console.ResetColor();
         }
     }
 }
