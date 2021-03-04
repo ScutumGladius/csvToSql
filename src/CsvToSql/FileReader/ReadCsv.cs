@@ -78,7 +78,7 @@ namespace CsvToSql.FileReader
             _timer.Stop();
 
             var timeSpan = TimeSpan.FromMilliseconds(_timer.ElapsedMilliseconds);
-            Log.Debug($"Import from '{importTask.file}' lenght:'{fileInfo.Length}' takes {_timer.ElapsedMilliseconds / 1000.0} seconds or {timeSpan.ToString("c")} of time.");
+            Log.Debug($"Import from '{importTask.file}' lenght:'{fileInfo.Length}' takes {_timer.ElapsedMilliseconds / 1000.0} seconds or {timeSpan.ToString("c")} of time. {rowCounter} rows inserted.");
             sqlWriter.UpdateStatusTable(rowCounter, timeSpan, fileInfo.Length);
 
             return rowCounter;

@@ -155,7 +155,8 @@ namespace CsvToSql.SqlWriter
                         return string.Format($"[{sqlField.Name.Replace("'", "''")}] [nvarchar]({sqlField.Length}) NULL");
                     }
 
-                    if (sqlField.Name.ToLower().Contains("path") )
+                    if (sqlField.Name.ToLower().Contains("path") ||
+                        sqlField.Name.ToLower().Contains("managedby"))
                     {
                         sqlField.Length = 256;
                         return string.Format($"[{sqlField.Name.Replace("'", "''")}] [nvarchar]({sqlField.Length}) NULL");
