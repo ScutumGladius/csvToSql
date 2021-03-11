@@ -31,6 +31,7 @@ namespace CsvToSqlTest
             // Assert
             Assert.AreEqual(importTasks.Count, 2);
         }
+
         [Test]
         public void ImportTasksTest_ReadColumnMapping()
         {
@@ -49,8 +50,8 @@ namespace CsvToSqlTest
                                 ""site (city, street, zip code)"": ""City"",
                                 ""ownerGID"": ""OwnerGID""
                             }
-                        ]
-                    
+                        ],
+                        ""additionalSQL"": ""Update table""
                     },
                     {
                         ""file"": ""2020.xlsx"",
@@ -71,9 +72,13 @@ namespace CsvToSqlTest
             Assert.AreEqual(importTasks.Count, 3);
             Assert.AreEqual(importTasks[0].columnMapping.Count, 3);
             Assert.AreEqual(importTasks[0].batchSize, 500);
+
             Assert.AreEqual(importTasks[0].uniqueOnly, true);
             Assert.AreEqual(importTasks[1].uniqueOnly, false);
             Assert.AreEqual(importTasks[2].uniqueOnly, false);
+
+            Assert.AreEqual(importTasks[0].additionalSQL, "Update table");
+            Assert.AreEqual(importTasks[1].additionalSQL, "");
         }
 
     }

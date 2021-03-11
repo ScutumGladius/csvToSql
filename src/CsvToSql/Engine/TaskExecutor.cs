@@ -23,13 +23,14 @@ namespace CsvToSql.Engine
         }
 
         public int Run(ImportFileOptions importTask) {
-            Log.Debug($"TaskExecutor Run for '{importTask.file}'");
+            Log.Debug($"TaskExecutor: run for File '{importTask.file}'");
 
             // 1. Read csv 
             // 2. Store csv
 
-            return CsvReader.Read(importTask, SqlWriter);
-
+            var errNum = CsvReader.Read(importTask, SqlWriter);
+            Log.Trace("-------------------------------------------------------------------");
+            return errNum;
         }
 
     }

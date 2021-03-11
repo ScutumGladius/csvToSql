@@ -91,6 +91,11 @@ namespace CsvToSql.SqlWriter
             return string.Format($"IF OBJECT_ID('TABLESTATUS', 'U') IS NOT NULL\n\tINSERT INTO [TABLESTATUS] ([Tablename],[Comment],[Imported]) VALUES('{ImportTask.table.Replace("'", "''")}', '{comment.Replace("'", "''")}', GETDATE());");
         }
 
+        internal string GetAdditionalSqlStatement()
+        {
+            return ImportTask.additionalSQL;
+        }
+
         private SqlField HeaderLineToSqlField(string fieldName) {
             var fName = fieldName;
             var sqlType = System.Data.SqlDbType.VarChar;

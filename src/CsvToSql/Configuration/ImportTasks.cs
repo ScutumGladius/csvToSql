@@ -71,6 +71,9 @@ namespace CsvToSql.Configuration
 
                 importFileOptions.uniqueOnly = GetTokenAsBoolean(l, importFile, "uniqueOnly", false);
 
+                importFileOptions.additionalSQL = GetTokenAsString(l, importFile, "additionalSQL", "");
+                
+
                 importFiles.Add(importFileOptions);
             }
             return importFiles;

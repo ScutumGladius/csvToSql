@@ -27,7 +27,8 @@ namespace CsvToSql.Core
         public string comment { get; set; }
         public int retryPolicyNumRetries { get; set; }
         public int retryPolicyDelayRetries { get; set; }
-        public bool uniqueOnly { get; set; } 
+        public bool uniqueOnly { get; set; }
+        public string additionalSQL { get; set; } // Ein Sql-Befehl, der nach dem Import ausgeführt wird. 
 
 
         public Dictionary<string, string> columnMapping { get; set; }

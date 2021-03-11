@@ -18,11 +18,11 @@ namespace CsvToSql.logging
         }
         public void Error(string toLog)
         {
-
             Console.BackgroundColor = ConsoleColor.Red;
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("Error:" + toLog);
+            Console.Write("Error:" + toLog);
             Console.ResetColor();
+            Console.Write("\r\n");
         }
     }
 }

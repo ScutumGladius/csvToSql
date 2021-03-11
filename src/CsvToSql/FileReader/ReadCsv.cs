@@ -59,7 +59,7 @@ namespace CsvToSql.FileReader
                             // Read a pies of CSV
                             batchLineFields = ReadNextBatch(csv, importTask.batchSize);
                             if (batchLineFields.Count == 0) break;
-                            Log.Debug($"Read Next Batch : {batchLineFields.Count} entries. From {rowCounter} to {batchLineFields.Count + rowCounter}");
+                            Log.Debug($"Read next batch : {batchLineFields.Count} entries start at {rowCounter} to {batchLineFields.Count + rowCounter}");
 
                             //Create & Write SQL
                             sqlWriter.Write(batchLineFields);
@@ -80,6 +80,8 @@ namespace CsvToSql.FileReader
             var timeSpan = TimeSpan.FromMilliseconds(_timer.ElapsedMilliseconds);
             Log.Debug($"Import from '{importTask.file}' lenght:'{fileInfo.Length}' takes {_timer.ElapsedMilliseconds / 1000.0} seconds or {timeSpan.ToString("c")} of time. {rowCounter} rows inserted.");
             sqlWriter.UpdateStatusTable(rowCounter, timeSpan, fileInfo.Length);
+
+            sqlWriter.ExecuteAdditionalSql();
 
             return rowCounter;
 

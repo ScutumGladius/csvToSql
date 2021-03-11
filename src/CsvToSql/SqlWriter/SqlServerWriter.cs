@@ -102,5 +102,13 @@ namespace CsvToSql.SqlWriter
         {
             sqlServerService.simpleExecQuery(sqlCmdBuilder.GetUpdateTatusStatement(rowCounter, timeSpan, fileLenght), ImportTask.retryPolicyNumRetries, ImportTask.retryPolicyDelayRetries);
         }
+
+        public void ExecuteAdditionalSql()
+        {
+            var additionalSqStatement = sqlCmdBuilder.GetAdditionalSqlStatement();
+            if (string.IsNullOrWhiteSpace(additionalSqStatement)) return;
+            Log.Debug($"ExecuteAdditionalSql : additionalSqStatement = \"{additionalSqStatement}\"");
+            sqlServerService.simpleExecQuery(additionalSqStatement);
+        }
     }
 }

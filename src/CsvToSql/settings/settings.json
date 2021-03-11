@@ -12,11 +12,12 @@
                 {
 					"##ImportDate" : "DCImportDate"
                 }
-            ]
+            ],
+			"additionalSQL": "select count(*) from SurveyLmlPmo"
         },
 		{
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/TNT/seuser_Disqualification_2021-01-25.csv",
+            "file": "d:/_TNT/seuser_Disqualification_2021-01-25.csv",
             "table": "SeuserDisqualification",
 			"truncate": true,
 			"columnMapping": [
@@ -77,7 +78,7 @@
         },
         {
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/TNT/seuser_Finished_2021-02-05_16.csv",
+            "file": "d:/_TNT/seuser_Finished_2021-02-05_16.csv",
             "table": "SeuserFinished",
 			"truncate": false,
 			"delimiter": ";",
@@ -89,7 +90,7 @@
         },
         {
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/TNT/seuser_Scheduling_2021-01-26.csv",
+            "file": "d:/_TNT/seuser_Scheduling_2021-01-26.csv",
             "table": "SeuserScheduling",
 			"truncate": false,
 			"delimiter": ";",

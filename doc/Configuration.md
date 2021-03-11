@@ -58,7 +58,8 @@ Die Settings-Datei besteht aus einer Liste zu importierender Dateien im Schlüss
                     "statusFlag": "Status",
                     "ownerGID": "OwnerGID"
                 }
-            ]
+            ],
+            "additionalSQL": "Update table"
         },
         {
             "file": "z:/20200911132530_20200907_Clients_SE.csv",
@@ -100,6 +101,7 @@ Die Settings-Datei besteht aus einer Liste zu importierender Dateien im Schlüss
 * retryPolicyNumRetries: Wie oft wird es versucht die erzeugte SQL-Query auszuführen.(default - 3)
 * retryPolicyDelayRetries: Zeitspanne zwischen den Fehlversuchen in Millisekunden (default - 1000)
 * uniqueOnly: Nur die unique Zeile werden importiert.(default - false)
+* "additionalSQL": Ein Sql-Befehl, der nach dem Import ausgeführt wird. 
 
 ##### Excel
 
