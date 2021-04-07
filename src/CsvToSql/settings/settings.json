@@ -8,6 +8,7 @@
 			"truncate": true,
 			"batchSize": 1000,
 			"saveMode": true,
+			"uniqueFileOnly": false,
 			"columnMapping": [
                 {
 					"##ImportDate" : "DCImportDate"
@@ -20,6 +21,7 @@
             "file": "d:/_TNT/seuser_Disqualification_2021-01-25.csv",
             "table": "SeuserDisqualification",
 			"truncate": true,
+			"uniqueFileOnly": true,
 			"columnMapping": [
                 {
 					"##ImportDate" : "DCImportDate"

@@ -16,6 +16,7 @@ namespace CsvToSql.Configuration
         {
             try
             {
+                l.Debug($"Read import tasks from JSON-file: '{argv.JsonCfgFile}'.");
                 var fileContent = File.ReadAllText(argv.JsonCfgFile);
 
                 //importTasks = (List<ImportFileOptions>)importTasks.ToObject<IList<ImportFileOptions>>(); ' Boom :(
@@ -70,11 +71,13 @@ namespace CsvToSql.Configuration
                 importFileOptions.retryPolicyDelayRetries = Math.Abs(GetTokenAsInt(l, importFile, "retryPolicyDelayRetries", 1000)); // Miliseconds
 
                 importFileOptions.uniqueOnly = GetTokenAsBoolean(l, importFile, "uniqueOnly", false);
+                importFileOptions.uniqueFileOnly = GetTokenAsBoolean(l, importFile, "uniqueFileOnly", true);
 
                 importFileOptions.additionalSQL = GetTokenAsString(l, importFile, "additionalSQL", "");
-                
 
                 importFiles.Add(importFileOptions);
+
+                l.Trace("--------------------------------------------------------");
             }
             return importFiles;
         }

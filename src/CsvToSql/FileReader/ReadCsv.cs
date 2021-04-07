@@ -53,7 +53,13 @@ namespace CsvToSql.FileReader
                         var headers = ReadHeaders(csv);
                         Log.Debug("Read:Headers : " + string.Join(",", headers));
                         sqlWriter.Init(importTask, headers);
- 
+
+                        if (!sqlWriter.EnsureFileIsUnique(fileInfo.Length)) {
+                            Log.Debug($"Read: Import failed. The File '{importTask.file}' with size:'{fileInfo.Length}' has been allready imported.");
+                            sqlWriter.UpdateStatusTable(-1, new TimeSpan(), fileInfo.Length);
+                            return -2;
+                        }
+
                         do
                         {
                             // Read a pies of CSV

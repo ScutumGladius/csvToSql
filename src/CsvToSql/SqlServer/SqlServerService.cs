@@ -44,6 +44,31 @@ namespace CsvToSql.SqlServer
             }
         }
 
+        public string ExecQuery(string query)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(query) || string.IsNullOrWhiteSpace(connectionString)) return "0";
+                //logQuery(query);
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        connection.Open();
+                        using var reader = command.ExecuteReader();
+                        reader.Read();
+                        return reader.GetValue(0).ToString();
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+                _logger.Error($"SqlServerService : catch exception in query : {query}.");
+                throw;
+            }
+        }
+
         private void logQuery(string query) { 
             if(query.Length < 60)
                 _logger.Trace($"SqlServerService : execute query {query}.");

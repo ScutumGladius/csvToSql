@@ -10,5 +10,6 @@ namespace CsvToSql.SqlWriter
         int Write(List<List<string>> linesToWrite);
         void UpdateStatusTable(int rowCounter, TimeSpan timeSpan, long length);
         void ExecuteAdditionalSql();
+        bool EnsureFileIsUnique(long length);
     }
 }

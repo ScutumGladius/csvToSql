@@ -44,6 +44,7 @@ namespace CsvToSqlTest
                         ""file"": ""2020.xlsx"",
                         ""batchSize"": 500,
                         ""uniqueOnly"": true,
+                        ""uniqueFileOnly"": false,
                         ""columnMapping"": [
                             {
                                 ""SAL code"": ""SAL"",
@@ -76,6 +77,10 @@ namespace CsvToSqlTest
             Assert.AreEqual(importTasks[0].uniqueOnly, true);
             Assert.AreEqual(importTasks[1].uniqueOnly, false);
             Assert.AreEqual(importTasks[2].uniqueOnly, false);
+       
+            Assert.AreEqual(importTasks[0].uniqueFileOnly, false);
+            Assert.AreEqual(importTasks[1].uniqueFileOnly, true);
+            Assert.AreEqual(importTasks[2].uniqueFileOnly, true);
 
             Assert.AreEqual(importTasks[0].additionalSQL, "Update table");
             Assert.AreEqual(importTasks[1].additionalSQL, "");

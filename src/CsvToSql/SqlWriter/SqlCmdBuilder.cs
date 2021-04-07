@@ -82,13 +82,27 @@ namespace CsvToSql.SqlWriter
                 "";
         }
 
-        internal string GetUpdateTatusStatement(int rowCounter, TimeSpan timeSpan, long fileLenght)
+        internal string GetUpdateStatusStatement(int rowCounter, TimeSpan timeSpan, long fileLenght)
         {
-            var comment = string.IsNullOrWhiteSpace(ImportTask.comment) ?
-                string.Format($"File \"{ImportTask.file}\" with lenght:'{fileLenght}' imported. {rowCounter} rows inserted from \"{(Environment.UserDomainName + "\\" + Environment.MachineName)}\" It took {timeSpan.TotalMilliseconds / 1000.0} Seconds or {timeSpan.ToString(@"hh\:mm\:ss")} of time.") :
-                ImportTask.comment;
 
-            return string.Format($"IF OBJECT_ID('TABLESTATUS', 'U') IS NOT NULL\n\tINSERT INTO [TABLESTATUS] ([Tablename],[Comment],[Imported]) VALUES('{ImportTask.table.Replace("'", "''")}', '{comment.Replace("'", "''")}', GETDATE());");
+            string comment;
+            if (rowCounter == -1) {
+                // die Datei wurde bereits importiert. Vermerke das Versuch in 'TABLESTATUS'
+                comment = string.Format($"Import failed. The File '{ImportTask.file}' with size:'{fileLenght}' has been allready imported.");
+            }
+            else
+            {
+                comment = string.IsNullOrWhiteSpace(ImportTask.comment) ?
+                    string.Format($"File \"{ImportTask.file}\" with lenght:'{fileLenght}' imported. {rowCounter} rows inserted from \"{(Environment.UserDomainName + "\\" + Environment.MachineName)}\" It took {timeSpan.TotalMilliseconds / 1000.0} Seconds or {timeSpan.ToString(@"hh\:mm\:ss")} of time.") :
+                    ImportTask.comment;
+            }
+            return string.Format($"IF OBJECT_ID('TABLESTATUS', 'U') IS NOT NULL\n\tINSERT INTO [TABLESTATUS] ([Tablename], [Comment], [Imported], [FileSize]) VALUES('{ImportTask.table.Replace("'", "''")}', '{comment.Replace("'", "''")}', GETDATE(), {fileLenght});");
+        }
+
+        internal string GetFileWasImportedSqlStatement(long fileInfoLength)
+        {
+            return
+            string.Format($"IF OBJECT_ID('TABLESTATUS', 'U') IS NULL\n\t   SELECT '1'\n\tELSE\n\t    SELECT Count(*) FROM TABLESTATUS WHERE FileSize = {fileInfoLength}");
         }
 
         internal string GetAdditionalSqlStatement()

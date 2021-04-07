@@ -65,6 +65,17 @@ namespace CsvToSqlTest
                 Log = log;
             }
 
+            public bool EnsureFileIsUnique(long length)
+            {
+                Log.Debug($"EnsureFileIsUnique: '{ImportTask.uniqueFileOnly}'");
+                return ImportTask.uniqueFileOnly;
+            }
+
+            public void ExecuteAdditionalSql()
+            {
+                Log.Debug($"ExecuteAdditionalSql: '{ImportTask.additionalSQL}'");
+            }
+
             public void Init(ImportFileOptions importTask, List<string> headers)
             {
                 ImportTask = importTask;

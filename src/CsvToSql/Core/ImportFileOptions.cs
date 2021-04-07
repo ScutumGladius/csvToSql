@@ -27,8 +27,10 @@ namespace CsvToSql.Core
         public string comment { get; set; }
         public int retryPolicyNumRetries { get; set; }
         public int retryPolicyDelayRetries { get; set; }
-        public bool uniqueOnly { get; set; }
+        public bool uniqueOnly { get; set; } // Import uniq only rows
         public string additionalSQL { get; set; } // Ein Sql-Befehl, der nach dem Import ausgeführt wird. 
+
+        public bool uniqueFileOnly { get; set; } // Import only unique Files (test by FileSize)
 
 
         public Dictionary<string, string> columnMapping { get; set; }

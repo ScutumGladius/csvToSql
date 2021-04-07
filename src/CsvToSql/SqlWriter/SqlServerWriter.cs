@@ -100,7 +100,7 @@ namespace CsvToSql.SqlWriter
 
         public void UpdateStatusTable(int rowCounter, TimeSpan timeSpan, long fileLenght)
         {
-            sqlServerService.simpleExecQuery(sqlCmdBuilder.GetUpdateTatusStatement(rowCounter, timeSpan, fileLenght), ImportTask.retryPolicyNumRetries, ImportTask.retryPolicyDelayRetries);
+            sqlServerService.simpleExecQuery(sqlCmdBuilder.GetUpdateStatusStatement(rowCounter, timeSpan, fileLenght), ImportTask.retryPolicyNumRetries, ImportTask.retryPolicyDelayRetries);
         }
 
         public void ExecuteAdditionalSql()
@@ -109,6 +109,17 @@ namespace CsvToSql.SqlWriter
             if (string.IsNullOrWhiteSpace(additionalSqStatement)) return;
             Log.Debug($"ExecuteAdditionalSql : additionalSqStatement = \"{additionalSqStatement}\"");
             sqlServerService.simpleExecQuery(additionalSqStatement);
+        }
+
+        public bool EnsureFileIsUnique(long fileInfoLength)
+        {
+            // Uniq-test is not requared
+            if (!ImportTask.uniqueFileOnly) return true; // return Ok, is qunique.
+
+            string sqlQuery = sqlCmdBuilder.GetFileWasImportedSqlStatement(fileInfoLength);
+            string sqlQueryResult = sqlServerService.ExecQuery(sqlQuery);
+
+            return sqlQueryResult.Equals("0"); // 0 - it was't hire, is uniq
         }
     }
 }

@@ -100,8 +100,9 @@ Die Settings-Datei besteht aus einer Liste zu importierender Dateien im Schlüss
 * comment: [optional] Kommentar für Table "TABLESTATUS".  
 * retryPolicyNumRetries: Wie oft wird es versucht die erzeugte SQL-Query auszuführen.(default - 3)
 * retryPolicyDelayRetries: Zeitspanne zwischen den Fehlversuchen in Millisekunden (default - 1000)
-* uniqueOnly: Nur die unique Zeile werden importiert.(default - false)
-* "additionalSQL": Ein Sql-Befehl, der nach dem Import ausgeführt wird. 
+* uniqueOnly: [optional] Nur die unique Zeile werden importiert.(default - false)
+* additionalSQL: [optional] Ein Sql-Befehl, der nach dem Import ausgeführt wird. 
+* uniqueFileOnly: [optional] Beim Importieren wird die Dateigröße mitgeschrieben. Wenn uniqueFileOnly auf true gesetzt wird, dann wird vom Programm verhindert, dass diegleiche Datei noch Mal importiert wird. (default = true)
 
 ##### Excel
 
