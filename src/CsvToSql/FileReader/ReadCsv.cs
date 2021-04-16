@@ -71,6 +71,7 @@ namespace CsvToSql.FileReader
                             sqlWriter.Write(batchLineFields);
 
                             rowCounter += batchLineFields.Count;
+
                         } while (batchLineFields.Count > 0);
                     }
                 }

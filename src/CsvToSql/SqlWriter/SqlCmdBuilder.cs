@@ -212,16 +212,20 @@ namespace CsvToSql.SqlWriter
 
         internal string GetInsertStatements(List<SqlField> headers, List<List<string>> linesToWrite)
         {
+            string insertIntoPart = "";
             if (linesToWrite.Count <= 0) return "";
-            string insertIntoPart = GetInsertIntoPart(headers);
+            insertIntoPart = GetInsertIntoPart(headers);
             string values = string.Join(",", linesToWrite.Select(r => BuildInsertStatmentForValues(headers, r)).Where(r => !string.IsNullOrEmpty(r)));
             return values.Length > 0 ? insertIntoPart + values + ";" : "";
         }
 
         private string BuildInsertStatmentForValues(List<SqlField> headers, List<string> rowToWrite)
         {
-            List<string> acc = new List<string>();     
-            for (int i = 0; i < headers.Count; i++)
+            List<string> acc = new List<string>();
+            try
+            {
+            int i = 0;
+            for (i = 0; i < headers.Count; i++)
             {
                 switch (headers[i].SqlType)
                 {
@@ -235,16 +239,27 @@ namespace CsvToSql.SqlWriter
                         acc.Add(string.Format($"'{ImportExactFileName.Replace("'", "''")}'"));
                         break;
                     default:
-                        var varCharValue = rowToWrite[i];
-                        if (ImportTask.saveMode)
-                            varCharValue = varCharValue.Left(headers[i].Length - 1);
-                        acc.Add(string.Format($"'{varCharValue.Replace("'", "''")}'"));
-                        break;
+                            var varCharValue = rowToWrite[i];
+                            if (ImportTask.saveMode)
+                                varCharValue = varCharValue.Left(headers[i].Length - 1);
+                            acc.Add("'" + varCharValue.Replace("'", "''") + "'");
+                            break;
                 }
             }
-            
-            var rowInsertValues= string.Format($"({string.Join(", ", acc )})");
-            return GetUniqueOnlyRow(rowInsertValues);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            try {
+                var rowInsertValues = "(" + string.Join(", ", acc) + ")";
+                return GetUniqueOnlyRow(rowInsertValues);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         private string GetUniqueOnlyRow(string rowInsertValues)

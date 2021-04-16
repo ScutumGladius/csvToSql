@@ -3,7 +3,7 @@
 	[
         {
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/TNT/survey_lml_pmo.csv",
+            "file": "d:/_TNT/survey_lml_pmo.csv",
             "table": "SurveyLmlPmo",
 			"truncate": true,
 			"batchSize": 1000,
@@ -30,7 +30,7 @@
         },
         {
             "connectionString": "Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
-            "file": "d:/TNT/20210118110419_20210118_Clients_SE.csv",
+            "file": "d:/_TNT/20210118110419_20210118_Clients_SE.csv",
             "table": "ADPL",
 			"truncate": true,
 			"columnMapping": [
@@ -101,6 +101,61 @@
 					"##ImportDate" : "DCImportDate"
                 }
             ]
-        }
+        },
+		{
+            "connectionString":"Server=localhost;Database=EUC;Trusted_Connection=yes;MultipleActiveResultSets=true;",
+            "file": "d:/TNT/NetdataDevice.csv",
+            "csv": true,
+			"delimiter": ";",
+            "quoting": "\"",
+            "uniqueFileOnly": false,
+            "table": "NETDATADEVICE",
+            "prefix": "nddev:",
+            "key": "devid",
+            "columnMapping": [
+                {
+                    "devId": "devId",
+                    "OU": "OU",
+                    "ouDescription": "ouDescription",
+                    "devDate": "devDate",
+                    "devprsPersonId": "devprsPersonId",
+                    "Person": "Person",
+                    "AKZPos": "AKZPos",
+                    "devType": "devType", 
+                    "devDescription": "devDescription", 
+                    "devCheckOutDate": "devCheckOutDate",
+                    "devToolNo": "devToolNo",
+                    "devSerialNo": "devSerialNo",
+                    "devInventoryNo": "devInventoryNo",
+                    "devSBSNo": "devSBSNo",
+                    "devLabel": "devLabel",
+                    "devSignierNr": "devSignierNr",
+                    "Location": "Location",
+                    "devlctLocationID": "devlctLocationID",
+                    "devRoom": "devRoom",
+                    "devMAC": "devMAC",
+                    "devBiosPwd": "devBiosPwd",
+                    "devInfo": "devInfo",
+                    "devInfoSuper": "devInfoSuper",
+                    "devOuId": "devOuId",
+                    "AKZDevice": "AKZDevice",
+                    "prsEmail1": "prsEmail1",
+                    "devNodeId": "devNodeId",
+                    "devHwType": "devHwType",
+                    "devprsResponsibleId": "devprsResponsibleId",
+                    "devprsResponsible": "devprsResponsible",
+                    "devSpecialWP": "devSpecialWP",
+                    "devAKZId": "devAKZId",
+                    "devNumber": "devNumber",
+                    "CostCentre": "CostCentre",
+                    "Division": "Division",
+                    "adiInfo": "adiInfo",
+                    "##ImportDate": "DCImportDate"
+                }
+            ],
+			"saveMode" : true,
+			"batchSize": 1000,
+			"additionalSQL": "exec dbo.string_TAIL 'dd:ee', ':'"
+		}
     ]
 }

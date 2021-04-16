@@ -95,7 +95,15 @@ namespace CsvToSql.SqlWriter
 
         public string GetInsertStatements(List<List<string>> linesToWrite)
         {
-            return sqlCmdBuilder.GetInsertStatements(HeaderFields, linesToWrite);
+            try
+            {
+                return sqlCmdBuilder.GetInsertStatements(HeaderFields, linesToWrite);
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"SqlServerWriter: GetInsertStatements - catch Exception :'{ex.Message}'");
+                throw;
+            }
         }
 
         public void UpdateStatusTable(int rowCounter, TimeSpan timeSpan, long fileLenght)
